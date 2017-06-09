@@ -12,14 +12,9 @@ export interface IHotel {}
 export class HotelSupport extends AbstractDataSupport<IHotel> {
 
     async search_hotels(params) {
-        let self = this;
-        let hotels: IHotel[] = [];
-        let ps = TASK_NAME.HOTEL.map( async (taskName) => {
-            let currentHotels = await self.getData(taskName, params);
-            hotels = [...hotels, ...currentHotels]
-        });
-        await Promise.all(ps);
-        return hotels;
+        let hotels = await this.getData(TASK_NAME.HOTEL, params);
+        let abroadHotels = await this.getData(TASK_NAME.HOTEL_ABROAD, params);
+        return [...hotels, ...abroadHotels];
     }
 }
 

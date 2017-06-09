@@ -13,13 +13,21 @@ export interface Ticket {
 export class TrafficSupport extends AbstractDataSupport<Ticket> {
     async search_tickets(params) {
         let self = this;
-        let tickets: Ticket[] = [];
-        let ps = [...TASK_NAME.FLIGHT, ...TASK_NAME.TRAIN].map( async (taskName) => {
-            let currentResult = await self.getData(taskName, params);
-            tickets = [...tickets, ...currentResult];
-        });
-        await Promise.all(ps);
-        return tickets;
+        let flightTickets = await this.search_flight_tickets(params);
+        let trainTickets = await this.search_train_tickets(params);
+        return [...trainTickets, ...flightTickets];
+    }
+
+    private async search_train_tickets(params) {
+        let trains = await this.getData(TASK_NAME.TRAIN, params);
+        let eurTrains = await this.getData(TASK_NAME.TRAIN_EUR, params);
+        return [...trains, ...eurTrains];
+    }
+
+    private async search_flight_tickets(params) {
+        let flights = await this.getData(TASK_NAME.FLIGHT, params);
+        let abroadFlights = await this.getData(TASK_NAME.FLIGHT_ABROAD, params);
+        return [...flights, ...abroadFlights];
     }
 }
 
