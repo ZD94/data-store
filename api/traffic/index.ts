@@ -4,12 +4,22 @@
 
 'use strict';
 import API from '@jingli/dnode-api';
+import {TASK_NAME} from '../types';
+import {AbstractDataSupport} from "../data-support";
 
-export class TrafficSupport {
+export interface Ticket {
 
-    async search_tickets(params: any) {
-        let result = await API['dtask_mgr'].runTask({name: 'ctrip-train-domestic', input: params});
-        return result;
+}
+export class TrafficSupport extends AbstractDataSupport<Ticket> {
+    async search_tickets(params) {
+        let self = this;
+        let tickets: Ticket[] = [];
+        let ps = [...TASK_NAME.FLIGHT, ...TASK_NAME.TRAIN].map( async (taskName) => {
+            let currentResult = await self.getData(taskName, params);
+            tickets = [...tickets, ...currentResult];
+        });
+        await Promise.all(ps);
+        return tickets;
     }
 }
 

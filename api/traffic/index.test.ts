@@ -10,6 +10,7 @@ import assert = require("assert");
 
 describe("traffic", function() {
 
+    this.timeout(30 * 1000);
     it("#search_tickets should be ok", async function() {
         try {
             let result = await API['traffic'].search_tickets({

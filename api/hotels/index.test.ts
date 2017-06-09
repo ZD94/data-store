@@ -10,7 +10,7 @@ import assert = require("assert");
 import util = require("util");
 
 describe("hotel", function() {
-
+    this.timeout(30 * 1000)
     it("#search_hotels should be ok", async function() {
         let checkInDate = moment().add(3, 'days').format("YYYY-MM-DD");
         let checkOutDate = moment().add(5, 'days').format("YYYY-MM-DD");
