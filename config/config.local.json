@@ -1,0 +1,12 @@
+{
+  "appName": "data-store",
+  "rootDir": ".",
+  "postgres":{
+    "url": "postgres://postgres:root@localhost/qmtrip",
+    "debug": true
+  },
+  "hosts": {
+    "dtask": {"addr": "127.0.0.1", "port": 4108}
+  },
+  "listen": 4009
+}

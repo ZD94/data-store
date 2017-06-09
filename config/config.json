@@ -1,0 +1,30 @@
+{
+  "appName": "${JL_APP_NAME}",
+  "rootDir": "${JL_APP_DATA_DIR}",
+  "postgres":{
+    "url": "${JL_APP_POSTGRES}",
+    "debug": true
+  },
+  "hosts": {
+    "main":{"addr":"api.l.jingli365.com", "port":4101},
+    "dtask": {"addr": "l.jingli365.com", "port": 14108}
+  },
+  "api": {
+    "debug": true,
+    "remotes": [
+      {
+        "connect": {"host":"${{hosts.main.addr}}", "port":"${{hosts.main.port}}"},
+        "modules": ["*"]
+      },
+      {
+        "connect": {"host":"${{hosts.dtask.addr}}", "port": "${{hosts.dtask.port}}"},
+        "modules": ["dtask_mgr"]
+      }
+    ]
+  },
+  "logger": {
+    "path": "${{rootDir}}/log",
+    "prefix": "${{appName}}_"
+  },
+  "listen": "${{rootDir}}/api.sock"
+}
