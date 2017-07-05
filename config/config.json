@@ -5,8 +5,12 @@
     "url": "${JL_APP_POSTGRES}",
     "debug": true
   },
+  "redis":{
+    "url": "${JL_APP_REDIS}"
+  },
   "hosts": {
     "main":{"addr":"api.l.jingli365.com", "port":4101},
+    "place":{"addr":"t.jingli365.com", "port":4201, "www":"https://${{hosts.main.addr}}"},
     "dtask": {"addr": "l.jingli365.com", "port": 14108}
   },
   "api": {
@@ -15,6 +19,10 @@
       {
         "connect": {"host":"${{hosts.main.addr}}", "port":"${{hosts.main.port}}"},
         "modules": ["*"]
+      },
+      {
+        "connect": {"host":"${{hosts.place.addr}}", "port":"${{hosts.place.port}}"},
+        "modules": ["place"]
       },
       {
         "connect": {"host":"${{hosts.dtask.addr}}", "port": "${{hosts.dtask.port}}"},

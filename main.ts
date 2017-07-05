@@ -25,6 +25,7 @@ zone.forkStackTrace()
         await API.initSql(path.join(__dirname, 'api'), config.api);
         await API.init(path.join(__dirname, 'api'), config.api);
         await API.startServices(config.listen);
+        console.log("port: ",config.listen);
         logger.info('API initialized.');
     });
 
