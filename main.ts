@@ -10,6 +10,8 @@ import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
+global.Promise = require('bluebird');
+Promise.promisifyAll(require("redis"));
 
 import * as zone from '@jingli/zone-setup';
 
