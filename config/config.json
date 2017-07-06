@@ -34,5 +34,5 @@
     "path": "${{rootDir}}/log",
     "prefix": "${{appName}}_"
   },
-  "listen": "${{rootDir}}/api.sock"
+  "listen": "4106"
 }
