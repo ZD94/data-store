@@ -5,7 +5,7 @@
 'use strict';
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
-var logger = new Logger("jibudget");
+var logger = new Logger("data-store");
 
 export abstract class AbstractDataSupport<T> {
 
