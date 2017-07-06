@@ -62,7 +62,7 @@ deploy:master:
     GIT_STRATEGY: none
     JL_APP_POSTGRES: ""
     JL_APP_DTASKMGR_ADDR: dockerhost
-    JL_APP_DTASKMGR_PORT: "14109"
+    JL_APP_DTASKMGR_PORT: "14108"
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
