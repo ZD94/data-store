@@ -11,6 +11,9 @@ import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
 
+import Bluebird = require('bluebird');
+global['Promise'] =Bluebird;
+Bluebird.promisifyAll(require("redis"));
 
 import * as zone from '@jingli/zone-setup';
 
