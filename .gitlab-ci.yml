@@ -69,4 +69,4 @@ deploy:master:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG --volume=/var/run/docker.sock:/var/run/docker.sock
+    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG 0.0.0.0:14106:4106
