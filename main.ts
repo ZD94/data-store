@@ -10,8 +10,7 @@ import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
-global.Promise = require('bluebird');
-Promise.promisifyAll(require("redis"));
+
 
 import * as zone from '@jingli/zone-setup';
 
@@ -27,7 +26,6 @@ zone.forkStackTrace()
         await API.initSql(path.join(__dirname, 'api'), config.api);
         await API.init(path.join(__dirname, 'api'), config.api);
         await API.startServices(config.listen);
-        console.log("port: ",config.listen);
         logger.info('API initialized.');
     });
 
