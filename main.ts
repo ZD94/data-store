@@ -11,6 +11,7 @@ import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
 
+
 import * as zone from '@jingli/zone-setup';
 
 process.on('unhandledRejection', (reason: any, p: PromiseLike<any>) => {

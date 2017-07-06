@@ -8,6 +8,7 @@ variables:
   JL_APP_DAEMON: "true"
   JL_APP_COMMAND: node main.js
   JL_APP_NODE_ID: CI-$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG
+  JL_APP_REDIS: redis://l.jingli365.com:16379
 
 stages:
   - build
