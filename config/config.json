@@ -5,6 +5,7 @@
     "url": "${JL_APP_POSTGRES}",
     "debug": true
   },
+  "cluster": true,
   "redis":{
     "url": "${JL_APP_REDIS}"
   },

@@ -24,11 +24,32 @@ process.on('unhandledRejection', (reason: any, p: PromiseLike<any>) => {
     logger.error(reason);
 });
 
+import cluster = require("cluster");
+import os = require("os");
+const pkg = require("./package.json");
 zone.forkStackTrace()
-    .run(async function(){
-        await API.initSql(path.join(__dirname, 'api'), config.api);
+    .run(async function () {
+        if (cluster.isMaster) { 
+            await API.initSql(path.join(__dirname, 'api'), config.api);
+        }
+
+        if (config.cluster && cluster.isMaster) { 
+            process.title = `${config.appName || pkg.name}-master`;
+            for (var i = 0; i < os.cpus().length; i++) { 
+                cluster.fork();
+            }
+            cluster.on('exit', function (worker) { 
+                logger.error(`worker ${worker.process.pid} has died!`);
+                cluster.fork();
+            })
+            return;
+        }
+        if (cluster.isWorker) { 
+            process.title = `${config.appName || pkg.name}-worker`;
+        }
         await API.init(path.join(__dirname, 'api'), config.api);
         await API.startServices(config.listen);
+        logger.info(`worker#${process.pid} API listen on ${config.listen}`);
         logger.info('API initialized.');
     });
 
