@@ -9,9 +9,10 @@ import {AbstractDataSupport} from "../data-support";
 // import {ITicket} from "../../_types/budget";
 import {ITicket} from "@jingli/common-type";
 import config = require("@jingli/config");
+import Bluebird = require("bluebird");
 
 var redis = require("redis");
-
+redis = Bluebird.promisifyAll(redis);
 let redis_client = null;
 
 let Train_IS_USE_CACHE = true;
