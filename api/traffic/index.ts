@@ -88,12 +88,13 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
 
         let result:  ITicket[] =[];
         let client = get_redis();
-        let key = `flight:${originPlace}-${destination}:${leaveDate}`;
+        let key = `flight:${originPlace}:${destination}:${leaveDate}`;
         if(Flight_IS_USE_CACHE){
             try{
                 result = JSON.parse(await client.getAsync(key))
-
-            } catch(err){}
+            } catch (err) {
+                console.error(err.stack ? err.stack : err);
+            }
             if(result && result.length) {
                 return result;
             }

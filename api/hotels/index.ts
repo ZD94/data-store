@@ -45,11 +45,13 @@ export class HotelSupport extends AbstractDataSupport<IHotel> {
         let result: IHotel[] = [];
         let client = get_redis();
 
-        let key = `hotel:${city}-${checkInDate}:${checkOutDate}:${latitude}:${longitude}`;
+        let key = `hotel:${city}:${checkInDate}:${checkOutDate}:${latitude}:${longitude}`;
         if(Hotel_IS_USE_CACHE){
             try {
-                result = JSON.parse(client.getAsync(key));
-            } catch(err){}
+                result = JSON.parse(await client.getAsync(key));
+            } catch (err) {
+                console.error(err.stack ? err.stack : err);
+            }
         }
         if(result && result.length) return result;
 
