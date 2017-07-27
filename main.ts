@@ -47,10 +47,15 @@ zone.forkStackTrace()
         if (cluster.isWorker) { 
             process.title = `${config.appName || pkg.name}-worker`;
         }
-        process.on('error', function (err) { 
-            logger.error(err.stack ? err.stack : err);
+        process.on('unhandledRejection', function (reason, p) { 
+            logger.error('unhandledRejection==>', reason)
+            throw reason;
+        })
+        process.on('uncaughtException', function (err) { 
+            logger.error('uncaughtException==>', err.stack ? err.stack : err);
             throw err;
         })
+
         await API.init(path.join(__dirname, 'api'), config.api);
         await API.startServices(config.listen);
         logger.info(`worker#${process.pid} API listen on ${config.listen}`);
