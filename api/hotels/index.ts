@@ -3,9 +3,9 @@
  */
 
 'use strict';
-
+import {DB} from '@jingli/database';
 import API from "@jingli/dnode-api";
-import {AbstractDataSupport} from "../data-support";
+import {AbstractDataSupport, DataStorage} from "../data-support";
 import {TASK_NAME} from "../types";
 import {IHotel} from "@jingli/common-type";
 import Config = require("@jingli/config")
@@ -32,7 +32,31 @@ export interface ISearchHotelParams {
     longitude?: number;
 }
 
+export class HotelStorage implements DataStorage<IHotel> {
+    async setData(name: string, input: any, result) {
+        let longitude = input.longitude;
+        let latitude = input.latitude;
+
+        return DB.models['CacheHotel'].create({
+            channel: name,
+            location: `POINT(${longitude} ${latitude})`,
+            checkInDate: input.checkInDate,
+            checkOutDate: input.checkOutDate,
+            data: result,
+            city: input.city,
+        })
+    }
+
+    async getData(name: string, input: any) {
+        return []
+    }
+}
+
 export class HotelSupport extends AbstractDataSupport<IHotel> {
+
+    constructor(storage: HotelStorage) {
+        super(storage);
+    }
 
     async search_hotels(params: ISearchHotelParams) {
         let {city, latitude, longitude, checkInDate, checkOutDate} = params;
@@ -73,5 +97,5 @@ export class HotelSupport extends AbstractDataSupport<IHotel> {
     }
 }
 
-var hotelSupport = new HotelSupport();
+var hotelSupport = new HotelSupport(new HotelStorage());
 export default hotelSupport;

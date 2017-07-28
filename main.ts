@@ -24,13 +24,22 @@ process.on('unhandledRejection', (reason: any, p: PromiseLike<any>) => {
     logger.error(reason);
 });
 
+import database = require("@jingli/database");
+database.init(config.postgres.url);
+
 import cluster = require("cluster");
 import os = require("os");
+import {loadModel, sync} from "./db";
 const pkg = require("./package.json");
 zone.forkStackTrace()
     .run(async function () {
-        if (cluster.isMaster) { 
+
+        if (cluster.isMaster) {
             await API.initSql(path.join(__dirname, 'api'), config.api);
+        }
+        await loadModel(path.join(__dirname, 'api'));
+        if (cluster.isMaster) {
+            await sync({force: false});
         }
 
         if (config.cluster && cluster.isMaster) { 

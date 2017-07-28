@@ -18,14 +18,15 @@ Logger.init({
 });
 let logger = new Logger('test');
 
+import config = require('@jingli/config');
+
 import * as database from '@jingli/database';
-database.init('postgres://postgres:root@localhost:5432/test');
+database.init(config.postgres.url);
 
 import API from '@jingli/dnode-api';
 
 global['API'] = API;
 
-import config = require('@jingli/config');
 
 process.on('unhandledRejection', (reason: any, p: Promise<any>) => {
     throw reason;
@@ -33,10 +34,14 @@ process.on('unhandledRejection', (reason: any, p: Promise<any>) => {
 
 let apipath = path.normalize(path.join(__dirname, '../api'));
 
+import {loadModel, sync} from '../db';
+
 zone.forkStackTrace()
     .run(async function(){
         try{
             await API.initSql(apipath, config.api);
+            await loadModel(path.join(__dirname, '../api'));
+            await sync({force: false});
             await API.init(apipath, config.api);
             await API.loadTests();
             await API.startServices(18088);

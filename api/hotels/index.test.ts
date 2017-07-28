@@ -11,7 +11,20 @@ import util = require("util");
 
 describe("hotel data", function() {
     this.timeout(30 * 1000)
-    it("#search_hotels should be ok", async function() {
+    // it("#search_hotels should be ok", async function() {
+    //     let checkInDate = moment().add(3, 'days').format("YYYY-MM-DD");
+    //     let checkOutDate = moment().add(5, 'days').format("YYYY-MM-DD");
+    //     let city = 'CT_131';
+    //
+    //     let hotels = await API['hotels'].search_hotels({
+    //         checkInDate: checkInDate,
+    //         checkOutDate: checkOutDate,
+    //         city: city,
+    //     });
+    //     assert.equal(util.isArray(hotels), true);
+    // });
+
+    it("#search_hotels should be ok with latitude,longitude", async function() {
         let checkInDate = moment().add(3, 'days').format("YYYY-MM-DD");
         let checkOutDate = moment().add(5, 'days').format("YYYY-MM-DD");
         let city = 'CT_131';
@@ -20,6 +33,8 @@ describe("hotel data", function() {
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             city: city,
+            latitude: 39.913607,
+            longitude: 116.663556,
         });
         assert.equal(util.isArray(hotels), true);
     });

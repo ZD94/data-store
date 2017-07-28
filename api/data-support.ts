@@ -5,9 +5,24 @@
 'use strict';
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
+import {IHotel, ITicket} from "@jingli/common-type";
 var logger = new Logger("data-store");
 
-export abstract class AbstractDataSupport<T> {
+export interface Data<T extends (ITicket|IHotel)> extends Array<T>{
+    [idx: number]: T;
+}
+
+export interface DataStorage<T extends (ITicket|IHotel)> {
+    setData: (name: string, input: any, data: Data<T>) => Promise<boolean>;
+    getData: (name: string, input: any) => Promise<Data<T>>;
+}
+
+export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
+    protected storage: DataStorage<T>;
+
+    constructor(storage: DataStorage<T> ) {
+        this.storage = storage;
+    }
 
     async getData(name: string| string[], params: Object) :Promise<T[]>{
         let names: string[] = []
@@ -16,20 +31,38 @@ export abstract class AbstractDataSupport<T> {
         } else {
             names = name;
         }
-        let result: T[];
-        for(let name of names) {
-            try {
-                result = await API['dtask_mgr'].runTask({name: name, input: params}) as T[];
-            } catch(err) {
-                logger.error(`${name},${params}`, err);
+        let result: Data<T> = [];
+
+        let ps = names.map( async (name) => {
+            let ret = await this.storage.getData(name, params);
+            if (!ret || !ret.length) {
+                ret = await API['dtask_mgr'].runTask({name: name, input: params}) as Data<T>;
+                await this.storage.setData(name, params, ret);
             }
-            if (result && result.length) {
-                break;
-            }
-        }
-        if (!result) {
-            result = [];
-        }
+            return ret;
+        });
+        let allRet: Data<T>[] = await Promise.all(ps);
+        allRet.forEach( (ret) => {
+            result = [...result, ...ret] as Data<T>;
+        })
+
+        // for(let name of names) {
+        //     try {
+        //         result = await this.storage.getData(name, params);
+        //         if (!result) {
+        //             result = await API['dtask_mgr'].runTask({name: name, input: params}) as T[];
+        //             await this.storage.setData(name, params, result);
+        //         }
+        //     } catch(err) {
+        //         logger.error(`${name},${params}`, err);
+        //     }
+        //     if (result && result.length) {
+        //         break;
+        //     }
+        // }
+        // if (!result) {
+        //     result = [];
+        // }
         return result;
     }
 }
