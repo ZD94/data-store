@@ -28,7 +28,25 @@
   },
   "logger": {
     "path": "${{rootDir}}/log",
-    "prefix": "${{appName}}_"
+    "prefix": "${{appName}}_",
+    "httptype": "short",
+    "mods": {
+      "sequelize": {
+        "prefix": "${{appName}}_sql_",
+        "console": true
+      },
+      "sqlinit": {
+        "prefix": "${{appName}}_sql_",
+        "console": true
+      },
+      "http": {
+        "mods": {
+          "access": {
+            "console": false
+          }
+        }
+      }
+    }
   },
   "listen": "4106"
 }

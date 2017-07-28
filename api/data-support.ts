@@ -18,9 +18,7 @@ export interface DataStorage<T extends (ITicket|IHotel)> {
 }
 
 export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
-    protected storage: DataStorage<T>;
-
-    constructor(storage: DataStorage<T> ) {
+    constructor(protected storage: DataStorage<T> ) {
         this.storage = storage;
     }
 

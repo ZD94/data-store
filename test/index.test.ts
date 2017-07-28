@@ -14,7 +14,7 @@ let http = require('http');
 Logger.init({
     path: path.join(__dirname, "../log"),
     prefix: "mocha_",
-    console: false
+    console: false,
 });
 let logger = new Logger('test');
 
@@ -35,13 +35,12 @@ process.on('unhandledRejection', (reason: any, p: Promise<any>) => {
 let apipath = path.normalize(path.join(__dirname, '../api'));
 
 import {loadModel, sync} from '../db';
-
 zone.forkStackTrace()
     .run(async function(){
         try{
-            await API.initSql(apipath, config.api);
             await loadModel(path.join(__dirname, '../api'));
             await sync({force: false});
+            await API.initSql(apipath, config.api);
             await API.init(apipath, config.api);
             await API.loadTests();
             await API.startServices(18088);

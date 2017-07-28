@@ -8,24 +8,7 @@ import {TASK_NAME} from '../types';
 import {AbstractDataSupport, DataStorage} from "../data-support";
 import {ITicket} from "@jingli/common-type";
 import config = require("@jingli/config");
-import Bluebird = require("bluebird");
 import {DB} from '@jingli/database';
-var redis = require("redis");
-redis = Bluebird.promisifyAll(redis);
-let redis_client = null;
-
-let Train_IS_USE_CACHE = true;
-let Flight_IS_USE_CACHE = true;
-let Cache_Duration = 10*60;
-
-function get_redis(){
-    if(!redis_client){
-        redis_client = redis.createClient(config.redis);
-        redis_client.on('error', function(err){
-        });
-    }
-    return redis_client;
-}
 
 export interface ISearchTicketParams {
     leaveDate: string;
@@ -34,11 +17,15 @@ export interface ISearchTicketParams {
 }
 
 export class TicketStorage implements DataStorage<ITicket> {
+    constructor(private model) {
+    }
+
     async setData(name: string, input: any, result) {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
-        await DB.models['CacheTicket'].create({
+        input = <ISearchTicketParams>input;
+        return this.model.create({
             channel: name,
             from: input.originPlace,
             to: input.destination,
@@ -46,13 +33,26 @@ export class TicketStorage implements DataStorage<ITicket> {
             data: result,
             originData: null
         })
-        console.log("name:", name, "input:", input, "result:", result);
-        return true;
     }
 
-    async getData(name: string, input: any) {
-        // console.log(name, input)
-        return []
+    async getData(name: string, input: any) :Promise<ITicket[]> {
+        if (typeof input == 'string') {
+            input = JSON.parse(input);
+        }
+        input = <ISearchTicketParams>input;
+        let where = {
+            channel: name,
+            date: input.leaveDate,
+            from: input.originPlace,
+            to: input.destination,
+            created_at: {
+                '$gte': new Date(Date.now() - 10 * 60 * 1000)
+            }
+        }
+        let result = await this.model.findOne({where: where, order: [["created_at", "desc"]]});
+        if (result)
+            return result.data as ITicket[];
+        return [];
     }
 }
 
@@ -81,28 +81,10 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         let destinationObj = await API['place'].getCityInfo({cityCode: destination});
 
         let result:  ITicket[] =[];
-        let client = get_redis();
-        // console.log("client in traffic: ", client);
-        // let key = `train:${originPlace}-${destination}:${leaveDate}`;
-        // if(Train_IS_USE_CACHE){
-        //     try{
-        //         result = JSON.parse(await client.getAsync(key));
-        //
-        //     } catch(err){}
-        //     if(result && result.length) {
-        //         return result;
-        //     }
-        // }
-
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
             result = await this.getData(TASK_NAME.TRAIN, params);
         }
-        // if(result && result.length) {
-        //     if(Train_IS_USE_CACHE){
-        //         await client.setAsync(key, JSON.stringify(result), 'ex', Cache_Duration);
-        //     }
-        // }
         //欧铁先注释掉了
         //this.getData(TASK_NAME.TRAIN_EUR, params);
         return result;
@@ -114,18 +96,6 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         let destinationObj = await API['place'].getCityInfo({cityCode: destination});
 
         let result:  ITicket[] =[];
-        let client = get_redis();
-        // let key = `flight:${originPlace}:${destination}:${leaveDate}`;
-        // if(Flight_IS_USE_CACHE){
-        //     try{
-        //         result = JSON.parse(await client.getAsync(key))
-        //     } catch (err) {
-        //         console.error(err.stack ? err.stack : err);
-        //     }
-        //     if(result && result.length) {
-        //         return result;
-        //     }
-        // }
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
             result = await this.getData(TASK_NAME.FLIGHT, params);
@@ -133,15 +103,9 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         if(originPlaceObj.isAbroad || destinationObj.isAbroad){
             result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params);
         }
-
-        // if(result && result.length) {
-        //     if(Train_IS_USE_CACHE){
-        //         await client.setAsync(key, JSON.stringify(result), 'ex', Cache_Duration);
-        //     }
-        // }
         return result;
     }
 }
 
-var trafficSupport = new TrafficSupport(new TicketStorage());
+var trafficSupport = new TrafficSupport(new TicketStorage(DB.models['CacheTicket']));
 export default trafficSupport;

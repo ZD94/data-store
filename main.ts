@@ -33,16 +33,14 @@ import {loadModel, sync} from "./db";
 const pkg = require("./package.json");
 zone.forkStackTrace()
     .run(async function () {
-
-        if (cluster.isMaster) {
-            await API.initSql(path.join(__dirname, 'api'), config.api);
-        }
+        //加载model
         await loadModel(path.join(__dirname, 'api'));
+        //同步数据库
         if (cluster.isMaster) {
             await sync({force: false});
+            await API.initSql(path.join(__dirname, 'api'), config.api);
         }
-
-        if (config.cluster && cluster.isMaster) { 
+        if (config.cluster && cluster.isMaster) {
             process.title = `${config.appName || pkg.name}-master`;
             for (var i = 0; i < os.cpus().length; i++) { 
                 cluster.fork();
