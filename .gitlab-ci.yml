@@ -1,4 +1,3 @@
-
 variables:
   DOCKER_REG: docker.l.jingli365.com
   DOCKER_NAME: $CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME
@@ -60,7 +59,7 @@ deploy:master:
     url: https://l.jingli365.com
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: ""
+    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "14108"
   script:
