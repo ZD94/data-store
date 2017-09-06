@@ -34,8 +34,14 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
         let ps = names.map( async (name) => {
             let ret = await this.storage.getData(name, params);
             if (!ret || !ret.length) {
-                ret = await API['dtask_mgr'].runTask({name: name, input: params}) as Data<T>;
-                await this.storage.setData(name, params, ret);
+                try {
+                    ret = await API['dtask_mgr'].runTask({name: name, input: params}) as Data<T>;
+                } catch(err) {
+                    logger.error(`DataStore ${name}, params: ${JSON.stringify(params)} Error:`, err);
+                }
+                if (ret) {
+                    await this.storage.setData(name, params, ret);
+                }
             }
             return ret;
         });
