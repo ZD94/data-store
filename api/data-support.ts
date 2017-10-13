@@ -7,6 +7,7 @@ import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 import {IHotel, ITicket} from "@jingli/common-type";
 var logger = new Logger("data-store");
+var _ = require("lodash");
 
 export interface Data<T extends (ITicket|IHotel)> extends Array<T>{
     [idx: number]: T;
@@ -46,6 +47,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
             return ret;
         });
         let allRet: Data<T>[] = await Promise.all(ps);
+        mergeTicketsOrHotelsWithSameNo(allRet);
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
         })
@@ -69,4 +71,39 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
         // }
         return result;
     }
+}
+
+
+function mergeTicketsOrHotelsWithSameNo(result: ITicket[]|IHotel[]){
+    if(result && !result.length){
+        return result;
+    }
+    let compareFactor = 'No';
+    if(result && result[0]["name"]) return result;   //酒店的数据暂时不执行合并
+    //注释酒店的数据合并代码，当需要合并酒店数据时，返回
+    // if(result[0] && result[0]["No"]) {
+    //     compareFactor = 'No';
+    // }
+    // if(result[0] && result[0]["name"]){
+    //     compareFactor = 'name';
+    // }
+    let mergedResults: ITicket[] = [];
+
+    let excludeds: Array<number> = [];
+    for(let i = 0; i < result.length && excludeds.indexOf(i) < 0; i++){
+        let obj = result[i];
+        for(let j = i+1; j < result.length && excludeds.indexOf(j) < 0;j++){
+            if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
+                excludeds.push(j);
+                obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+            }
+        }
+        if(excludeds.indexOf(i) < 0) {
+            mergedResults.push(obj);
+        }
+    }
+    if(!mergedResults || typeof mergedResults == undefined) {
+        mergedResults = result;
+    }
+    return mergedResults;
 }
