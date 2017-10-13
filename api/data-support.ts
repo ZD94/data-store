@@ -78,8 +78,8 @@ function mergeSameTicketsOrHotels(result: Data<any>[]){
     if(result && !result.length){
         return result;
     }
-    let compareFactor = 'No';
     if(result && result[0]["name"]) return result;   //酒店的数据暂时不执行合并
+    let compareFactor = 'No';
     //注释酒店的数据合并代码，当需要合并酒店数据时，返回
     // if(result[0] && result[0]["No"]) {
     //     compareFactor = 'No';
