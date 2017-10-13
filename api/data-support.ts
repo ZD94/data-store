@@ -74,7 +74,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
 }
 
 
-function mergeSameTicketsOrHotels(result: ITicket[]|IHotel[]){
+function mergeSameTicketsOrHotels(result: Data<any>[]){
     if(result && !result.length){
         return result;
     }
@@ -87,7 +87,7 @@ function mergeSameTicketsOrHotels(result: ITicket[]|IHotel[]){
     // if(result[0] && result[0]["name"]){
     //     compareFactor = 'name';
     // }
-    let mergedResults: ITicket[] = [];
+    let mergedResults: Data<any>[] = [];
 
     let excludeds: Array<number> = [];
     for(let i = 0; i < result.length && excludeds.indexOf(i) < 0; i++){
