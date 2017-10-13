@@ -47,7 +47,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
             return ret;
         });
         let allRet: Data<T>[] = await Promise.all(ps);
-        mergeTicketsOrHotelsWithSameNo(allRet);
+        mergeSameTicketsOrHotels(allRet);
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
         })
@@ -74,7 +74,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
 }
 
 
-function mergeTicketsOrHotelsWithSameNo(result: ITicket[]|IHotel[]){
+function mergeSameTicketsOrHotels(result: ITicket[]|IHotel[]){
     if(result && !result.length){
         return result;
     }
