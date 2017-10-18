@@ -48,23 +48,14 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
             return ret;
         });
         let allRet: Data<T>[] = await Promise.all(ps);
-        console.log("length of original data: ", allRet.length)
-        if(allRet.length && allRet[0].length && allRet[0][0].No) {
-            console.log("-----length of original data: ", allRet[0].length, allRet[1].length)
-            fs.writeFileSync("./origin1.json", JSON.stringify(allRet[0]), 'utf-8')
-            fs.writeFileSync("./origin2.json", JSON.stringify(allRet[1]), 'utf-8')
-        }
 
         let isMergeNeeded = false;
-
         if(allRet && allRet.length >= 2) {
             isMergeNeeded = true;
         }
-
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
         })
-
         result = mergeSameTicketsOrHotels(result, isMergeNeeded);
 
         // for(let name of names) {
