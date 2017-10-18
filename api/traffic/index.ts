@@ -9,6 +9,7 @@ import {AbstractDataSupport, DataStorage} from "../data-support";
 import {ITicket} from "@jingli/common-type";
 import config = require("@jingli/config");
 import {DB} from '@jingli/database';
+import {RequestTypes} from "../data-support"
 
 export interface ISearchTicketParams {
     leaveDate: string;
@@ -83,7 +84,7 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         let result:  ITicket[] =[];
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            result = await this.getData(TASK_NAME.TRAIN, params);
+            result = await this.getData(TASK_NAME.TRAIN, params, RequestTypes.traffic);
         }
         //欧铁先注释掉了
         //this.getData(TASK_NAME.TRAIN_EUR, params);
@@ -98,10 +99,10 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         let result:  ITicket[] =[];
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            result = await this.getData(TASK_NAME.FLIGHT, params);
+            result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
         }
         if(originPlaceObj.isAbroad || destinationObj.isAbroad){
-            result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params);
+            result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
         }
         return result;
     }
