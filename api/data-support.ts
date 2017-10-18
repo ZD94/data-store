@@ -8,6 +8,7 @@ import Logger from '@jingli/logger';
 import {IHotel, ITicket} from "@jingli/common-type";
 var logger = new Logger("data-store");
 var _ = require("lodash");
+var fs = require('fs')
 
 export interface Data<T extends (ITicket|IHotel)> extends Array<T>{
     [idx: number]: T;
@@ -41,16 +42,30 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
                     logger.error(`DataStore ${name}, params: ${JSON.stringify(params)} Error:`, err);
                 }
                 if (ret) {
-                    await this.storage.setData(name, params, ret);
+                    // await this.storage.setData(name, params, ret);
                 }
             }
             return ret;
         });
         let allRet: Data<T>[] = await Promise.all(ps);
-        mergeSameTicketsOrHotels(allRet);
+        console.log("length of original data: ", allRet.length)
+        if(allRet.length && allRet[0].length && allRet[0][0].No) {
+            console.log("-----length of original data: ", allRet[0].length, allRet[1].length)
+            fs.writeFileSync("./origin1.json", JSON.stringify(allRet[0]), 'utf-8')
+            fs.writeFileSync("./origin2.json", JSON.stringify(allRet[1]), 'utf-8')
+        }
+
+        let isMergeNeeded = false;
+
+        if(allRet && allRet.length >= 2) {
+            isMergeNeeded = true;
+        }
+
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
         })
+
+        result = mergeSameTicketsOrHotels(result, isMergeNeeded);
 
         // for(let name of names) {
         //     try {
@@ -73,12 +88,14 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
     }
 }
 
-
-function mergeSameTicketsOrHotels(result: Data<any>[]){
-    if(result && !result.length){
+function mergeSameTicketsOrHotels(result: any, isMergeNeeded: boolean): any{
+    if(!isMergeNeeded) {
         return result;
     }
-    if(result && result[0]["name"]) return result;   //酒店的数据暂时不执行合并
+    if(!result || !result.length){
+        return result;
+    }
+    if(result && result.length && result[0]["name"]) return result;   //酒店的数据暂时不执行合并
     let compareFactor = 'No';
     //注释酒店的数据合并代码，当需要合并酒店数据时，返回
     // if(result[0] && result[0]["No"]) {
@@ -87,23 +104,26 @@ function mergeSameTicketsOrHotels(result: Data<any>[]){
     // if(result[0] && result[0]["name"]){
     //     compareFactor = 'name';
     // }
-    let mergedResults: Data<any>[] = [];
+    let mergedResults = [];
 
     let excludeds: Array<number> = [];
     for(let i = 0; i < result.length && excludeds.indexOf(i) < 0; i++){
         let obj = result[i];
-        for(let j = i+1; j < result.length && excludeds.indexOf(j) < 0;j++){
-            if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
-                excludeds.push(j);
-                obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+        for(let j = i+1; j < result.length ;j++){
+            if(excludeds.indexOf(j) < 0) {
+                if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
+                    excludeds.push(j);
+                    obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+                }
             }
         }
-        if(excludeds.indexOf(i) < 0) {
-            mergedResults.push(obj);
-        }
+        mergedResults.push(obj);
     }
     if(!mergedResults || typeof mergedResults == undefined) {
         mergedResults = result;
     }
     return mergedResults;
 }
+
+
+
