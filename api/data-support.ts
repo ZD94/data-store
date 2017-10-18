@@ -48,14 +48,15 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
         });
         let allRet: Data<T>[] = await Promise.all(ps);
 
-        let isMergeNeeded = false;
-        if(allRet && allRet.length >= 2) {
-            isMergeNeeded = true;
-        }
+
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
         })
-        result = mergeSameTicketsOrHotels(result, isMergeNeeded);
+
+        if(allRet && allRet.length >= 2) {
+            result = mergeSameTicketsOrHotels(result);
+        }
+
 
         // for(let name of names) {
         //     try {
@@ -78,10 +79,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
     }
 }
 
-function mergeSameTicketsOrHotels(result: any, isMergeNeeded: boolean): any{
-    if(!isMergeNeeded) {
-        return result;
-    }
+function mergeSameTicketsOrHotels(result: any): any{
     if(!result || !result.length){
         return result;
     }
