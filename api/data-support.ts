@@ -8,7 +8,6 @@ import Logger from '@jingli/logger';
 import {IHotel, ITicket} from "@jingli/common-type";
 var logger = new Logger("data-store");
 var _ = require("lodash");
-var fs = require('fs')
 
 export interface Data<T extends (ITicket|IHotel)> extends Array<T>{
     [idx: number]: T;
@@ -42,7 +41,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
                     logger.error(`DataStore ${name}, params: ${JSON.stringify(params)} Error:`, err);
                 }
                 if (ret) {
-                    // await this.storage.setData(name, params, ret);
+                    await this.storage.setData(name, params, ret);
                 }
             }
             return ret;
