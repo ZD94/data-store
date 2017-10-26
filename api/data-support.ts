@@ -7,9 +7,15 @@ import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 import {IHotel, ITicket} from "@jingli/common-type";
 var logger = new Logger("data-store");
+var _ = require("lodash");
 
 export interface Data<T extends (ITicket|IHotel)> extends Array<T>{
     [idx: number]: T;
+}
+
+export var RequestTypes = {
+    traffic: 'traffic',
+    hotel: 'hotel'
 }
 
 export interface DataStorage<T extends (ITicket|IHotel)> {
@@ -22,7 +28,7 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
         this.storage = storage;
     }
 
-    async getData(name: string| string[], params: Object) :Promise<T[]>{
+    async getData(name: string| string[], params: Object, type: string ) :Promise<T[]>{
         let names: string[] = []
         if (typeof name == 'string') {
             names.push(name);
@@ -46,27 +52,44 @@ export abstract class AbstractDataSupport<T extends (ITicket|IHotel)> {
             return ret;
         });
         let allRet: Data<T>[] = await Promise.all(ps);
+
+
         allRet.forEach( (ret) => {
             result = [...result, ...ret] as Data<T>;
-        })
+        });
 
-        // for(let name of names) {
-        //     try {
-        //         result = await this.storage.getData(name, params);
-        //         if (!result) {
-        //             result = await API['dtask_mgr'].runTask({name: name, input: params}) as T[];
-        //             await this.storage.setData(name, params, result);
-        //         }
-        //     } catch(err) {
-        //         logger.error(`${name},${params}`, err);
-        //     }
-        //     if (result && result.length) {
-        //         break;
-        //     }
-        // }
-        // if (!result) {
-        //     result = [];
-        // }
+        if(allRet && allRet.length >= 2 && type == RequestTypes.traffic ) {
+            result = mergeSameTickets(result);
+        }
+
         return result;
     }
 }
+
+function mergeSameTickets(result: any): any{
+    if(!result || !result.length){
+        return result;
+    }
+    let compareFactor = 'No';
+    let mergedResults = [];
+    let excludeds: Array<number> = [];
+    for(let i = 0; i < result.length && excludeds.indexOf(i) < 0; i++){
+        let obj = result[i];
+        for(let j = i+1; j < result.length ;j++){
+            if(excludeds.indexOf(j) < 0) {
+                if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
+                    excludeds.push(j);
+                    obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+                }
+            }
+        }
+        mergedResults.push(obj);
+    }
+    if(!mergedResults || typeof mergedResults == undefined) {
+        mergedResults = result;
+    }
+    return mergedResults;
+}
+
+
+

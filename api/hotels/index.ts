@@ -13,6 +13,7 @@ import sequelize = require("sequelize");
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
+import {RequestTypes} from "../data-support"
 
 export interface ISearchHotelParams {
     checkInDate: string;
@@ -88,10 +89,10 @@ export class HotelSupport extends AbstractDataSupport<IHotel> {
 
         let result: IHotel[] = [];
         if (!cityObj.isAbroad) {
-            result = await this.getData(TASK_NAME.HOTEL, params);
+            result = await this.getData(TASK_NAME.HOTEL, params, RequestTypes.hotel);
         }
         if(cityObj.isAbroad) {
-            result = await this.getData(TASK_NAME.HOTEL_ABROAD, params);
+            result = await this.getData(TASK_NAME.HOTEL_ABROAD, params, RequestTypes.hotel);
         }
         return result;
     }

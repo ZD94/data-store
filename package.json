@@ -26,7 +26,7 @@
     "typescript": "^2.4.1"
   },
   "dependencies": {
-    "@jingli/common-type": "^1.0.9",
+    "@jingli/common-type": "^1.1.0",
     "@jingli/config": "^1.0.6",
     "@jingli/database": "^1.0.1",
     "@jingli/dnode-api": "^1.1.14",
@@ -37,6 +37,7 @@
     "express": "^4.15.3",
     "pg": "^6.2.3",
     "redis": "^2.7.1",
-    "ts-node": "^3.1.0"
+    "ts-node": "^3.1.0",
+    "lodash": "^4.15.0"
   }
 }
