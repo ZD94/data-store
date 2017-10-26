@@ -73,17 +73,20 @@ function mergeSameTickets(result: any): any{
     let compareFactor = 'No';
     let mergedResults = [];
     let excludeds: Array<number> = [];
-    for(let i = 0; i < result.length && excludeds.indexOf(i) < 0; i++){
-        let obj = result[i];
-        for(let j = i+1; j < result.length ;j++){
-            if(excludeds.indexOf(j) < 0) {
-                if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
-                    excludeds.push(j);
-                    obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+    for(let i = 0; i < result.length; i++){
+        if(excludeds.indexOf(i) < 0) {
+            let obj = result[i];
+            for(let j = i+1; j < result.length ;j++){
+                if(excludeds.indexOf(j) < 0) {
+                    if(obj[compareFactor].trim() == result[j][compareFactor].trim()) {
+                        excludeds.push(j);
+                        obj['agents'] = _.concat(obj["agents"], result[j]["agents"]);
+                    }
                 }
             }
+            mergedResults.push(obj);
         }
-        mergedResults.push(obj);
+
     }
     if(!mergedResults || typeof mergedResults == undefined) {
         mergedResults = result;
