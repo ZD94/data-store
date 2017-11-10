@@ -10,5 +10,11 @@ export const TASK_NAME = {
     FLIGHT: ['phantom-ctrip-flight', 'jingzhong-flight'],
     FLIGHT_ABROAD: ['phantom-ctrip-flight','skyscanner-flight', 'kiwi-flight'],
     HOTEL: ['ctrip-hotel-domestic'],
-    HOTEL_ABROAD: ['ctrip-hotel-abroad']
+    HOTEL_ABROAD: ['ctrip-hotel-abroad'],
+    FAST_FLIGHT: ['jingzhong-flight'],
+    FAST_FLIGHT_ABROAD: ['kiwi-flight'],
+}
+
+export interface SearchParams {
+    isCacheData?: boolean;
 }

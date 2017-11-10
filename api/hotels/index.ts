@@ -2,20 +2,20 @@
  * Created by wlh on 2017/6/9.
  */
 
+
 'use strict';
 import {DB} from '@jingli/database';
 import API from "@jingli/dnode-api";
 import {AbstractDataSupport, DataStorage} from "../data-support";
-import {TASK_NAME} from "../types";
+import {SearchParams, TASK_NAME} from "../types";
 import {IHotel} from "@jingli/common-type";
-import Config = require("@jingli/config")
 import sequelize = require("sequelize");
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
 import {RequestTypes} from "../data-support"
 
-export interface ISearchHotelParams {
+export interface ISearchHotelParams extends SearchParams {
     checkInDate: string;
     checkOutDate: string;
     city: string;

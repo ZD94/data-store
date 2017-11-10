@@ -2,16 +2,17 @@
  * Created by wlh on 2017/6/9.
  */
 
+
 'use strict';
 import API from '@jingli/dnode-api';
-import {TASK_NAME} from '../types';
+import {SearchParams, TASK_NAME} from '../types';
 import {AbstractDataSupport, DataStorage} from "../data-support";
 import {ITicket} from "@jingli/common-type";
 import config = require("@jingli/config");
 import {DB} from '@jingli/database';
 import {RequestTypes} from "../data-support"
 
-export interface ISearchTicketParams {
+export interface ISearchTicketParams extends SearchParams {
     leaveDate: string;
     originPlace: string;
     destination: string;
@@ -76,7 +77,7 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         return [...trainTickets, ...flightTickets];
     }
 
-    private async search_train_tickets(params) {
+    private async search_train_tickets(params: ISearchTicketParams) {
         let {originPlace, destination, leaveDate} = params;
         let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
         let destinationObj = await API['place'].getCityInfo({cityCode: destination});
@@ -91,7 +92,7 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         return result;
     }
 
-    private async search_flight_tickets(params) {
+    private async search_flight_tickets(params: ISearchTicketParams) {
         let {originPlace, destination,leaveDate} = params;
         let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
         let destinationObj = await API['place'].getCityInfo({cityCode: destination});
@@ -99,10 +100,18 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
         let result:  ITicket[] =[];
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
+            if (params.isCacheData) {
+                result = await this.getData(TASK_NAME.FAST_FLIGHT, params, RequestTypes.traffic);
+            } else { 
+                result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
+            }
         }
-        if(originPlaceObj.isAbroad || destinationObj.isAbroad){
-            result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
+        if (originPlaceObj.isAbroad || destinationObj.isAbroad) {
+            if (params.isCacheData) {
+                result = await this.getData(TASK_NAME.FAST_FLIGHT_ABROAD, params, RequestTypes.traffic);
+            } else { 
+                result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
+            }
         }
         return result;
     }
