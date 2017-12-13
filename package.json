@@ -28,12 +28,16 @@
     "@jingli/database": "^1.0.2",
     "@jingli/dnode-api": "^2.0.1",
     "@jingli/logger": "^1.0.1",
+    "@jingli/zone-setup": "^1.0.3",
     "@types/redis": "^2.8.2",
+    "@types/sequelize": "^4.0.79",
     "app-module-path": "^2.2.0",
     "bluebird": "^3.5.1",
     "pg": "6.2.3",
     "redis": "^2.8.0",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "sequelize": "^4.28.0",
+    "tslib": "^1.8.1"
   }
 }
