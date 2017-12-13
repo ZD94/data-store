@@ -2,27 +2,28 @@
  * Created by wlh on 2017/6/9.
  */
 
-
-'use strict';
 import API from '@jingli/dnode-api';
-import {SearchParams, TASK_NAME} from '../types';
-import {AbstractDataSupport, DataStorage} from "../data-support";
-import {ITicket} from "@jingli/common-type";
-import config = require("@jingli/config");
-import {DB} from '@jingli/database';
-import {RequestTypes} from "../data-support"
+import { SearchParams, TASK_NAME } from '../types';
+import { AbstractDataSupport, DataStorage } from "../data-support";
+import { ITicket } from "@jingli/common-type";
+import config from "@jingli/config";
+import { DB } from '@jingli/database';
+import { RequestTypes } from "../data-support";
+import { Param } from "../../model/event";
+import Logger from '@jingli/logger';
+let logger = new Logger("data-store");
 
-export interface ISearchTicketParams extends SearchParams {
+export interface ISearchTicketParams {
     leaveDate: string;
     originPlace: string;
     destination: string;
 }
 
-export class TicketStorage implements DataStorage<ITicket> {
+export class TicketStorage {
     constructor(private model) {
     }
 
-    async setData(name: string, input: any, result) {
+    async setData(input: ISearchTicketParams, name: string, result) {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
@@ -37,7 +38,7 @@ export class TicketStorage implements DataStorage<ITicket> {
         })
     }
 
-    async getData(name: string, input: any) :Promise<ITicket[]> {
+    async getData(input: ISearchTicketParams, name: string): Promise<{ data: ITicket[], created_at: string }> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
@@ -47,20 +48,53 @@ export class TicketStorage implements DataStorage<ITicket> {
             date: input.leaveDate,
             from: input.originPlace,
             to: input.destination,
-            created_at: {
-                '$gte': new Date(Date.now() - 10 * 60 * 1000)
-            }
+            // created_at: {
+            //     '$gte': new Date(Date.now() - 10 * 60 * 1000)
+            // }
         }
-        let result = await this.model.findOne({where: where, order: [["created_at", "desc"]]});
-        if (result)
-            return result.data as ITicket[];
-        return [];
+        let result = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
+        return result;
     }
 }
 
+export let trafficStorage = new TicketStorage(DB.models['CacheTicket']);
+
+export class TrafficRealTimeData {
+    async getData(input: ISearchTicketParams, name: string) {
+        if (typeof input == 'string') {
+            input = JSON.parse(input);
+        }
+        let ret;
+        try {
+            console.log("TrafficRealTimeData, go to the dtask_mgr     ", name, input);
+            ret = await API["dtask_mgr"].runTask({ name, input });
+        } catch (err) {
+            logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
+            return [];
+        }
+
+        if (ret) {
+            await trafficStorage.setData(input, name, ret);
+        }
+        return ret;
+    }
+}
+
+export let trafficRealTimeData = new TrafficRealTimeData();
+
+
+
+
+
+
+
+
+
+
+/* 暂时保留，兼容之前的方法 */
 export class TrafficSupport extends AbstractDataSupport<ITicket> {
 
-    constructor(storage: TicketStorage) {
+    constructor(storage) {
         super(storage);
     }
 
@@ -78,11 +112,11 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
     }
 
     private async search_train_tickets(params: ISearchTicketParams) {
-        let {originPlace, destination, leaveDate} = params;
-        let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
-        let destinationObj = await API['place'].getCityInfo({cityCode: destination});
+        let { originPlace, destination, leaveDate } = params;
+        let originPlaceObj = await API['place'].getCityInfo({ cityCode: originPlace });
+        let destinationObj = await API['place'].getCityInfo({ cityCode: destination });
 
-        let result:  ITicket[] =[];
+        let result: ITicket[] = [];
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
             result = await this.getData(TASK_NAME.TRAIN, params, RequestTypes.traffic);
@@ -93,25 +127,25 @@ export class TrafficSupport extends AbstractDataSupport<ITicket> {
     }
 
     private async search_flight_tickets(params: ISearchTicketParams) {
-        let {originPlace, destination,leaveDate} = params;
-        let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
-        let destinationObj = await API['place'].getCityInfo({cityCode: destination});
+        let { originPlace, destination, leaveDate } = params;
+        let originPlaceObj = await API['place'].getCityInfo({ cityCode: originPlace });
+        let destinationObj = await API['place'].getCityInfo({ cityCode: destination });
 
-        let result:  ITicket[] =[];
+        let result: ITicket[] = [];
 
         if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            if (params.isCacheData) {
-                result = await this.getData(TASK_NAME.FAST_FLIGHT, params, RequestTypes.traffic);
-            } else { 
-                result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
-            }
+            // if (params.isCacheData) {
+            //     result = await this.getData(TASK_NAME.FAST_FLIGHT, params, RequestTypes.traffic);
+            // } else {
+            result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
+            // }
         }
         if (originPlaceObj.isAbroad || destinationObj.isAbroad) {
-            if (params.isCacheData) {
-                result = await this.getData(TASK_NAME.FAST_FLIGHT_ABROAD, params, RequestTypes.traffic);
-            } else { 
-                result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
-            }
+            // if (params.isCacheData) {
+            //     result = await this.getData(TASK_NAME.FAST_FLIGHT_ABROAD, params, RequestTypes.traffic);
+            // } else {
+            result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
+            // }
         }
         return result;
     }

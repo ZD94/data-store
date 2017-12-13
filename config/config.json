@@ -10,7 +10,7 @@
     "url": "${JL_APP_REDIS}"
   },
   "hosts": {
-    "place":{"addr":"t.jingli365.com", "port":14201},
+    "place":{"addr":"l.jingli365.com", "port":14101},
     "dtask": {"addr": "l.jingli365.com", "port": 14108}
   },
   "api": {

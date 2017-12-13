@@ -5,15 +5,18 @@
 'use strict';
 
 import * as path from 'path';
-let config = require('@jingli/config');
+import config from "@jingli/config";
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 Logger.init(config.logger);
 let logger = new Logger('dtask');
 
 import Bluebird = require('bluebird');
-global['Promise'] =Bluebird;
+global['Promise'] = Bluebird;
 Bluebird.promisifyAll(require("redis"));
+
+import cache from "@jingli/cache";
+cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
 
 import * as zone from '@jingli/zone-setup';
 
@@ -29,7 +32,7 @@ database.init(config.postgres.url);
 
 import cluster = require("cluster");
 import os = require("os");
-import {loadModel, sync} from "./db";
+import { loadModel, sync } from "./db";
 const pkg = require("./package.json");
 zone.forkStackTrace()
     .run(async function () {
@@ -37,28 +40,28 @@ zone.forkStackTrace()
         await loadModel(path.join(__dirname, 'api'));
         //同步数据库
         if (cluster.isMaster) {
-            await sync({force: false});
+            await sync({ force: false });
             await API.initSql(path.join(__dirname, 'api'), config.api);
         }
         if (config.cluster && cluster.isMaster) {
             process.title = `${config.appName || pkg.name}-master`;
-            for (var i = 0; i < os.cpus().length; i++) { 
+            for (var i = 0; i < os.cpus().length; i++) {
                 cluster.fork();
             }
-            cluster.on('exit', function (worker) { 
+            cluster.on('exit', function (worker) {
                 logger.error(`worker ${worker.process.pid} has died!`);
                 cluster.fork();
             })
             return;
         }
-        if (cluster.isWorker) { 
+        if (cluster.isWorker) {
             process.title = `${config.appName || pkg.name}-worker`;
         }
-        process.on('unhandledRejection', function (reason, p) { 
+        process.on('unhandledRejection', function (reason, p) {
             logger.error('unhandledRejection==>', reason)
             throw reason;
         })
-        process.on('uncaughtException', function (err) { 
+        process.on('uncaughtException', function (err) {
             logger.error('uncaughtException==>', err.stack ? err.stack : err);
             throw err;
         })
@@ -68,4 +71,3 @@ zone.forkStackTrace()
         logger.info(`worker#${process.pid} API listen on ${config.listen}`);
         logger.info('API initialized.');
     });
-

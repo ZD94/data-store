@@ -18,26 +18,21 @@
   "author": "lihui.wang@jingli365.com",
   "license": "ISC",
   "devDependencies": {
-    "@types/bluebird": "^3.5.8",
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^7.0.29",
-    "mocha": "^3.4.2",
-    "ts-node": "^3.0.6",
-    "typescript": "^2.4.1"
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.2"
   },
   "dependencies": {
-    "@jingli/common-type": "^1.1.0",
-    "@jingli/config": "^1.0.6",
-    "@jingli/database": "^1.0.1",
-    "@jingli/dnode-api": "^1.1.14",
+    "@jingli/cache": "0.0.2",
+    "@jingli/common-type": "^1.1.2",
+    "@jingli/config": "^1.1.1",
+    "@jingli/database": "^1.0.2",
+    "@jingli/dnode-api": "^2.0.1",
     "@jingli/logger": "^1.0.1",
-    "@jingli/zone-setup": "^1.0.1",
     "app-module-path": "^2.2.0",
-    "bluebird": "^3.5.0",
-    "express": "^4.15.3",
-    "pg": "^6.2.3",
-    "redis": "^2.7.1",
-    "ts-node": "^3.1.0",
-    "lodash": "^4.15.0"
+    "bluebird": "^3.5.1",
+    "pg": "6.2.3",
+    "redis": "^2.8.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
   }
 }
