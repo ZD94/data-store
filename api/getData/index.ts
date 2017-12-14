@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-13 20:57:50
+ * @Last Modified time: 2017-12-14 10:30:25
  * @content what is the content of this file. */
 
 import DataEvent from "../../model/event";
@@ -28,15 +28,6 @@ let getData = {
 };
 
 export default getData;
-
-/*
-type: BudgetType;
-channels: string[];
-input: ISearchHotelParams | ISearchTicketParams;
-url: string;
-id: string;
-*/
-
 
 // setTimeout(async () => {
 //     let result = await getData.getData({
