@@ -11,7 +11,6 @@ variables:
 
 stages:
   - build
-  - test
   - docker
   - deploy
 
@@ -26,7 +25,7 @@ build:dist:
   stage: build
   only:
     - branches
-  image: $DOCKER_REG/jl-build:v2
+  image: $DOCKER_REG/jl-build:v3
   tags:
     - serial
   cache:
@@ -38,23 +37,6 @@ build:dist:
     - echo `npmhash`
     - npm install
     - npm run dist
-
-test:unit:
-    stage: test
-    only:
-      - branches
-    image: $DOCKER_REG/jl-build:v2
-    tags:
-      - serial
-    cache:
-      key: $CI_PIPELINE_ID
-      paths:
-        - dist/
-    script:
-    - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
-    - echo `npmhash`
-    - npm install
-    - ./node_modules/mocha/bin/mocha test/
 
 build:image:
   stage: docker
@@ -87,7 +69,7 @@ deploy:master:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14106:4106
+    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14116:4106
 
 deploy:release:
   stage: deploy
