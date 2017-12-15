@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-09 21:21:19 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-13 19:05:23
+ * @Last Modified time: 2017-12-15 11:07:02
  * @content what is the content of this file. */
 
 import cache from "@jingli/cache";
@@ -16,8 +16,8 @@ let request = require("request-promise");
 let _ = require("lodash");
 
 export enum BudgetType {
-    hotel = "hotel",
-    traffic = "traffic"
+    TRAFFICT = 1,
+    HOTEL = 2
 }
 
 export interface Param {
@@ -75,7 +75,7 @@ export class DataEvent {
         await cache.write(dataOrder.id, dataOrder);
 
         for (let name of channelResult) {
-            if (param.type == BudgetType.hotel) {
+            if (param.type == BudgetType.HOTEL) {
                 this.beginHotelCache(dataOrder.id, param.input as ISearchHotelParams, name);
             } else {
                 this.beginTrafficCache(dataOrder.id, param.input as ISearchTicketParams, name);
@@ -163,7 +163,7 @@ export class DataEvent {
             await cache.remove(orderData.id);
         }
 
-        if (orderData.param.type == BudgetType.hotel) {
+        if (orderData.param.type == BudgetType.HOTEL) {
             orderData.data = this.hotelMergeData(orderData.data);
         } else {
             orderData.data = this.trafficMergeData(orderData.data);
@@ -183,7 +183,7 @@ export class DataEvent {
     async switchChannel(param: Param): Promise<string[]> {
         let result = [];
         //现阶段给出一个默认值
-        if (param.type == BudgetType.hotel) {
+        if (param.type == BudgetType.HOTEL) {
             let input = param.input as ISearchHotelParams;
             let { city, latitude, longitude } = input;
             let cityObj = await API['place'].getCityInfo({ cityCode: city });
