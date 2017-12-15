@@ -1,9 +1,3 @@
-FROM dk.jingli365.com/jl-node:v2
-MAINTAINER Ke Peng <ke.peng@jingli365.com>
-CMD node main.js
-
-
-
 FROM dk.jingli365.com/jl-run:v2
 MAINTAINER Ke Peng <ke.peng@jingli365.com>
 COPY package.json /opt/app/
