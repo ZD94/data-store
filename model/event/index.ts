@@ -76,7 +76,7 @@ export class DataEvent {
         }
         //存储数据订单
         await cache.write(dataOrder.id, dataOrder);
-        console.log("addEvent channelResult ====>", channelResult);
+        console.log("addEvent channelResult ====>");
         for (let name of channelResult) {
             if (param.type == BudgetType.HOTEL) {
                 this.beginHotelCache(dataOrder.id, param.input as ISearchHotelParams, name);
@@ -92,7 +92,7 @@ export class DataEvent {
             console.error("dealEvent not found the cache id.");
             return;
         }
-        console.log("dealEvent====>", step, name, cacheResult.param);
+        console.log("dealEvent====>", step, name);
         if (!cacheResult.param.callbackUrl) {
             console.warn("the params not has the callback url. Don't need deal more.===>", cacheResult.param);
             return;
@@ -117,7 +117,7 @@ export class DataEvent {
         cacheResult.data = result;
 
 
-        console.log("result =================> ", JSON.stringify(result));
+        console.log("result =================> ", result.length);
         //update dataOrder's data.
         await cache.write(id, cacheResult);
         await this.sendData(cacheResult);
@@ -271,7 +271,7 @@ export class DataEvent {
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, 'minutes');
 
-        console.log(567, cacheData.created_at, diffTime);
+        // console.log(567, cacheData.created_at, diffTime);
         if (diffTime <= TRAFFIC_CACHE_TIME) {
             //this is finally data.
             await this.dealEvent(id, cacheData.data, STEP.FINAL, name);

@@ -18,11 +18,10 @@ let getData = {
 
         //将请求加入事件循环机制 don't need result.
         DataEvent.addEvent(params).then((result) => {
-            console.log(123, result);
+            console.log(result);
         }).catch((e) => {
-            console.log(123, e);
+            console.error(e);
         });
-        //获取缓存数据，并判断是否需要拉取最新数据
 
         if (params.type == BudgetType.HOTEL) {
             console.log("BudgetType.HOTEL  ")
