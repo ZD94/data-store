@@ -25,6 +25,7 @@ export interface Param {
     channels: string[];
     input: ISearchHotelParams | ISearchTicketParams;
     callbackUrl: string;
+    orderId: string;
     id: string;
 }
 
@@ -42,6 +43,7 @@ export interface Channel {
 
 export interface DataOrder {
     id: string;
+    orderId: string;
     channels: Channel[],
     param: Param,
     step: STEP,
@@ -57,6 +59,7 @@ export class DataEvent {
     async addEvent(param: Param) {
         let dataOrder: DataOrder = {
             id: param.id,
+            orderId: param.orderId,
             channels: [],    //记录 经过匹配后有哪几个频道可用
             param,
             step: STEP.TWO,
@@ -73,7 +76,7 @@ export class DataEvent {
         }
         //存储数据订单
         await cache.write(dataOrder.id, dataOrder);
-
+        console.log("addEvent channelResult ====>", channelResult);
         for (let name of channelResult) {
             if (param.type == BudgetType.HOTEL) {
                 this.beginHotelCache(dataOrder.id, param.input as ISearchHotelParams, name);
@@ -113,6 +116,8 @@ export class DataEvent {
         }
         cacheResult.data = result;
 
+
+        console.log("result =================> ", JSON.stringify(result));
         //update dataOrder's data.
         await cache.write(id, cacheResult);
         await this.sendData(cacheResult);
@@ -173,7 +178,8 @@ export class DataEvent {
             await request({
                 uri: orderData.param.callbackUrl,
                 method: "post",
-                form: JSON.stringify(orderData)
+                body: orderData,
+                json: true
             });
         } catch (e) {
             console.error(e);
@@ -183,9 +189,11 @@ export class DataEvent {
     async switchChannel(param: Param): Promise<string[]> {
         let result = [];
         //现阶段给出一个默认值
+        // console.log("switchChannel===>", param)
         if (param.type == BudgetType.HOTEL) {
             let input = param.input as ISearchHotelParams;
             let { city, latitude, longitude } = input;
+            // console.log("hotel ===>", input);
             let cityObj = await API['place'].getCityInfo({ cityCode: city });
             if (!latitude || !longitude) {
                 input.latitude = cityObj.latitude;

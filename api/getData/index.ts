@@ -2,28 +2,35 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-14 10:30:25
+ * @Last Modified time: 2017-12-16 13:35:08
  * @content what is the content of this file. */
 
 import DataEvent from "../../model/event";
 import cache from "@jingli/cache";
-import { Param, BudgetType } from "model/event"
+import { Param, BudgetType } from "model/event";
+import { testTraffic, testHotel } from "model/fullPrice";
 
 let getData = {
     async getData(params: Param) {
 
         //1.请求全价数据, 直接返回结果 await result.
-
-
+        console.log("params params params =====>", params);
 
         //将请求加入事件循环机制 don't need result.
-        DataEvent.addEvent(params);
+        DataEvent.addEvent(params).then((result) => {
+            console.log(123, result);
+        }).catch((e) => {
+            console.log(123, e);
+        });
         //获取缓存数据，并判断是否需要拉取最新数据
 
-
-
-        return { "age": 123 }; //返回全价数据结果
-
+        if (params.type == BudgetType.HOTEL) {
+            console.log("BudgetType.HOTEL  ")
+            return testHotel;
+        } else {
+            console.log("! BudgetType.HOTEL");
+            return testTraffic;
+        }
     }
 };
 
@@ -31,7 +38,8 @@ export default getData;
 
 // setTimeout(async () => {
 //     let result = await getData.getData({
-//         type: BudgetType.hotel,
+//         type: BudgetType.HOTEL,
+//         orderId: "b0852580-dfb5-11e7-a0ed-5b3409abe4op",
 //         channels: [],
 //         input: {
 //             checkInDate: "2017-12-22",
@@ -42,7 +50,7 @@ export default getData;
 //         id: "b0852580-dfb5-11e7-a0ed-5b3409abe4c9"
 //     });
 
-//     console.log("setTimeout hotel ======> ", result);
+//     // console.log("setTimeout hotel ======> ", result);
 // }, 3000);
 
 
@@ -51,7 +59,8 @@ export default getData;
 
 // setTimeout(async () => {
 //     let result = await getData.getData({
-//         type: BudgetType.traffic,
+//         type: BudgetType.TRAFFICT,
+//         orderId: "b0852580-dfb5-11e7-a0ed-5b3409abe466",
 //         channels: [],
 //         input: {
 //             leaveDate: "2017-12-22",
@@ -62,5 +71,5 @@ export default getData;
 //         id: "b0852580-dfb5-11e7-a0ed-5b3409abe455"
 //     });
 
-//     console.log("setTimeout traffic ======> ", result);
-// }, 8000);
+//     // console.log("setTimeout traffic ======> ", result);
+// }, 4000);
