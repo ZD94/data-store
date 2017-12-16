@@ -4,3 +4,4 @@ dist
 config/config.local.json
 log
 .vscode/
+tmp
