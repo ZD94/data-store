@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-09 21:21:19 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-15 11:07:02
+ * @Last Modified time: 2017-12-17 14:07:48
  * @content what is the content of this file. */
 
 import cache from "@jingli/cache";
@@ -175,14 +175,16 @@ export class DataEvent {
         }
 
         try {
-            await request({
+            let ret = await request({
                 uri: orderData.param.callbackUrl,
                 method: "post",
                 body: orderData,
                 json: true
             });
+            console.log("事件推送返回值", ret);
         } catch (e) {
-            console.error(e);
+            // console.error(e);
+            console.log("事件推送 Fail!", orderData.param.callbackUrl);
         }
     }
 
@@ -222,7 +224,7 @@ export class DataEvent {
     async beginHotelCache(id: string, input: ISearchHotelParams, name: string) {
 
         let cacheData = await hotelStorage.getData(input, name);
-        if (!cacheData) {
+        if (!cacheData || !cacheData.data.length) {
             this.getHotelRealTimeData(id, input, name);
             return;
         }
@@ -262,11 +264,10 @@ export class DataEvent {
     async beginTrafficCache(id: string, input: ISearchTicketParams, name: string) {
 
         let cacheData = await trafficStorage.getData(input, name);
-        if (!cacheData) {
+        if (!cacheData || !cacheData.data.length) {
             this.getTrafficRealTimeData(id, input, name);
             return;
         }
-
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, 'minutes');

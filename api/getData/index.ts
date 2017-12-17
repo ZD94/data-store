@@ -2,34 +2,35 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-16 13:35:08
+ * @Last Modified time: 2017-12-17 14:01:41
  * @content what is the content of this file. */
 
 import DataEvent from "../../model/event";
 import cache from "@jingli/cache";
 import { Param, BudgetType } from "model/event";
-import { testTraffic, testHotel } from "model/fullPrice";
+import { testTraffic, testHotel, fullPriceService } from "model/fullPrice";
 
 let getData = {
     async getData(params: Param) {
-
-        //1.请求全价数据, 直接返回结果 await result.
         console.log("params params params =====>", params);
 
         //将请求加入事件循环机制 don't need result.
-        DataEvent.addEvent(params).then((result) => {
-            console.log(result);
-        }).catch((e) => {
-            console.error(e);
-        });
+        setTimeout(() => {
+            DataEvent.addEvent(params).then((result) => {
+                console.log(result);
+            }).catch((e) => {
+                console.error(e);
+            });
+        }, 20000);
 
-        if (params.type == BudgetType.HOTEL) {
-            console.log("BudgetType.HOTEL  ")
-            return testHotel;
-        } else {
-            console.log("! BudgetType.HOTEL");
-            return testTraffic;
-        }
+        return await fullPriceService.getFullPriceBudget(params);
+        /*  if (params.type == BudgetType.HOTEL) {
+             console.log("BudgetType.HOTEL  ")
+             return testHotel;
+         } else {
+             console.log("! BudgetType.HOTEL");
+             return testTraffic;
+         } */
     }
 };
 

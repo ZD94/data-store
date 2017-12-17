@@ -28,6 +28,10 @@ export class TicketStorage {
             input = JSON.parse(input);
         }
         input = <ISearchTicketParams>input;
+        if (!result.length) {
+            return;
+        }
+
         return this.model.create({
             channel: name,
             from: input.originPlace,
@@ -48,6 +52,9 @@ export class TicketStorage {
             date: input.leaveDate,
             from: input.originPlace,
             to: input.destination,
+            data: {
+                ne: '[]'
+            }
             // created_at: {
             //     '$gte': new Date(Date.now() - 10 * 60 * 1000)
             // }

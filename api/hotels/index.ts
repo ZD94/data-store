@@ -36,6 +36,9 @@ export class HotelStorage {
     async setData(input: ISearchHotelParams, name: string, result) {
         let longitude = input.longitude;
         let latitude = input.latitude;
+        if (!result.length) {
+            return;
+        }
 
         return this.model.create({
             channel: name,
@@ -66,6 +69,9 @@ export class HotelStorage {
             checkInDate: input.checkInDate,
             checkOutDate: input.checkOutDate,
             city: input.city,
+            data: {
+                ne: '[]'
+            }
             // created_at: {
             //     '$gte': new Date( Date.now() - CACHE_DURATION)
             // }
