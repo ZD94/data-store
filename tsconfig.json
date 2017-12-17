@@ -6,7 +6,7 @@
     "outDir": "dist/",
     "noEmitHelpers": true,
     "importHelpers": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": false,
     "alwaysStrict": true,
     "experimentalDecorators": true,
