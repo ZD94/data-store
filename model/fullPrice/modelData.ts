@@ -1057,7 +1057,7 @@ export let testTraffic = [
                 "cabins": [
                     {
                         "name": 4,
-                        "price": 080
+                        "price": 80
                     }
                 ]
             }

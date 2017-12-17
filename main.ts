@@ -3,6 +3,7 @@
  */
 
 'use strict';
+require('app-module-path').addPath(__dirname);
 
 import * as path from 'path';
 import config from "@jingli/config";
