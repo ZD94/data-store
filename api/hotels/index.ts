@@ -63,7 +63,6 @@ export class HotelStorage {
             ), {
                 '$lte': MAX_DISTANCE,
             });
-        console.log(3333);
         let where2 = {
             channel: name,
             checkInDate: input.checkInDate,
@@ -128,10 +127,6 @@ export class HotelSupport extends AbstractDataSupport<IHotel> {
             params.latitude = cityObj.latitude;
             params.longitude = cityObj.longitude;
         }
-        console.log(1111, cityObj);
-        // params.latitude = 30.26;
-        // params.longitude = 120.19;
-
 
         let result: IHotel[] = [];
         if (!cityObj.isAbroad) {
@@ -145,17 +140,3 @@ export class HotelSupport extends AbstractDataSupport<IHotel> {
 }
 
 export var hotelSupport = new HotelSupport(hotelStorage);
-
-
-
-
-
-// setTimeout(async () => {
-//     let result = await hotelSupport.search_hotels({
-//         checkInDate: "2017-12-22",
-//         checkOutDate: "2017-12-24",
-//         city: "CT_179"
-//     });
-
-//     console.log("result====>", result.length);
-// }, 5000);

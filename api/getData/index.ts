@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-17 14:01:41
+ * @Last Modified time: 2017-12-17 15:49:08
  * @content what is the content of this file. */
 
 import DataEvent from "../../model/event";
@@ -12,7 +12,7 @@ import { testTraffic, testHotel, fullPriceService } from "model/fullPrice";
 
 let getData = {
     async getData(params: Param) {
-        console.log("params params params =====>", params);
+        // console.log("params params params =====>", params);
 
         //将请求加入事件循环机制 don't need result.
         setTimeout(() => {
