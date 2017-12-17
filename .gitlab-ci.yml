@@ -35,7 +35,6 @@ build:dist:
   script:
     - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
     - echo `npmhash`
-    - git submodule update --init --checkout
     - npm install
     - npm run dist
 
@@ -50,6 +49,7 @@ build:image:
     - docker build -t $DOCKER_CI_NAME . --build-arg NPM_TOKEN=$NPM_TOKEN
     - docker push $DOCKER_CI_NAME
 
+
 deploy:master:
   stage: deploy
   only:
@@ -59,9 +59,10 @@ deploy:master:
     url: https://l.jingli365.com
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "14108"
+    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
+
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
@@ -83,6 +84,7 @@ deploy:release:
     JL_APP_POSTGRES: ""
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "4108"
+
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME

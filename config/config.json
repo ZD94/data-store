@@ -1,28 +1,44 @@
 {
   "appName": "${JL_APP_NAME}",
   "rootDir": "${JL_APP_DATA_DIR}",
-  "postgres":{
+  "postgres": {
     "url": "${JL_APP_POSTGRES}",
     "debug": true
   },
   "cluster": true,
-  "redis":{
+  "redis": {
     "url": "${JL_APP_REDIS}"
   },
   "hosts": {
-    "place":{"addr":"t.jingli365.com", "port":14201},
-    "dtask": {"addr": "l.jingli365.com", "port": 14108}
+    "place": {
+      "addr": "l.jingli365.com",
+      "port": 14101
+    },
+    "dtask": {
+      "addr": "l.jingli365.com",
+      "port": 14108
+    }
   },
   "api": {
     "debug": true,
     "remotes": [
       {
-        "connect": {"host":"${{hosts.place.addr}}", "port":"${{hosts.place.port}}"},
-        "modules": ["place"]
+        "connect": {
+          "host": "${{hosts.place.addr}}",
+          "port": "${{hosts.place.port}}"
+        },
+        "modules": [
+          "place"
+        ]
       },
       {
-        "connect": {"host":"${{hosts.dtask.addr}}", "port": "${{hosts.dtask.port}}"},
-        "modules": ["dtask_mgr"]
+        "connect": {
+          "host": "${{hosts.dtask.addr}}",
+          "port": "${{hosts.dtask.port}}"
+        },
+        "modules": [
+          "dtask_mgr"
+        ]
       }
     ]
   },

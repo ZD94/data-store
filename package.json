@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ",
-    "dist": "tsc && mkdir -p dist/config && cp config/config.json dist/config/ && cp package.json dist/package.json"
+    "dist": "tsc &&  cp -R package.json dist/ && cp -R config dist/"
   },
   "repository": {
     "type": "git",
@@ -18,20 +18,20 @@
   "author": "lihui.wang@jingli365.com",
   "license": "ISC",
   "devDependencies": {
-    "@types/bluebird": "^3.5.8",
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^7.0.29",
-    "mocha": "^3.4.2",
-    "ts-node": "^3.0.6",
-    "typescript": "^2.4.1"
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.2"
   },
   "dependencies": {
-    "@jingli/common-type": "^1.1.0",
-    "@jingli/config": "1.0.6",
-    "@jingli/database": "^1.0.1",
-    "@jingli/dnode-api": "^1.1.14",
+    "@jingli/cache": "0.0.3",
+    "@jingli/common-type": "^1.1.2",
+    "@jingli/database": "^1.0.2",
+    "@jingli/dnode-api": "^2.0.2",
     "@jingli/logger": "^1.0.1",
-    "@jingli/zone-setup": "^1.0.1",
+    "@jingli/zone-setup": "^1.0.3",
+    "@types/moment": "^2.13.0",
+    "@types/redis": "^2.8.2",
+    "@types/sequelize": "^4.0.79",
+    "@types/uuid": "^3.4.3",
     "app-module-path": "^2.2.0",
     "bluebird": "^3.5.0",
     "express": "^4.15.3",
@@ -39,6 +39,11 @@
     "moment": "^2.19.4",
     "pg": "^6.2.3",
     "redis": "^2.7.1",
-    "ts-node": "^3.1.0"
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "sequelize": "^4.28.0",
+    "ts-node": "^3.1.0",
+    "tslib": "^1.8.1",
+    "uuid": "^3.1.0"
   }
 }

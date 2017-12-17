@@ -3,4 +3,5 @@ dist
 .idea
 config/config.local.json
 log
+.vscode/
 tmp
