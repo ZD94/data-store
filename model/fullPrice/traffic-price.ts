@@ -27,6 +27,9 @@ export class TrafficPrice {
         });
         if (!price)
             return price;
+        if (price.length == 0) {
+            console.log("TrafficPrice 全价数据没有", params);
+        }
         return price;
     }
 

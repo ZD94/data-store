@@ -12,8 +12,6 @@ import { testTraffic, testHotel, fullPriceService } from "model/fullPrice";
 
 let getData = {
     async getData(params: Param) {
-        // console.log("params params params =====>", params);
-
         //将请求加入事件循环机制 don't need result.
         setTimeout(() => {
             DataEvent.addEvent(params).then((result) => {
@@ -21,7 +19,8 @@ let getData = {
             }).catch((e) => {
                 console.error(e);
             });
-        }, 20000);
+        }, 2000);
+
 
         return await fullPriceService.getFullPriceBudget(params);
         /*  if (params.type == BudgetType.HOTEL) {

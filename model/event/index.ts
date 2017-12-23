@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-09 21:21:19 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-17 14:07:48
+ * @Last Modified time: 2017-12-23 11:11:20
  * @content what is the content of this file. */
 
 import cache from "@jingli/cache";
@@ -74,9 +74,11 @@ export class DataEvent {
                 data: []
             });
         }
+
+        param.input = checkParams(param.input);
+
         //存储数据订单
         await cache.write(dataOrder.id, dataOrder);
-        console.log("addEvent channelResult ====>");
         for (let name of channelResult) {
             if (param.type == BudgetType.HOTEL) {
                 this.beginHotelCache(dataOrder.id, param.input as ISearchHotelParams, name);
@@ -170,8 +172,16 @@ export class DataEvent {
 
         if (orderData.param.type == BudgetType.HOTEL) {
             orderData.data = this.hotelMergeData(orderData.data);
+            if (orderData.step == STEP.FINAL) {
+                // orderData.data = testHotel;
+            }
+
         } else {
             orderData.data = this.trafficMergeData(orderData.data);
+
+            if (orderData.step == STEP.FINAL) {
+                // orderData.data = testTraffic;
+            }
         }
 
         try {
@@ -222,7 +232,6 @@ export class DataEvent {
     }
 
     async beginHotelCache(id: string, input: ISearchHotelParams, name: string) {
-
         let cacheData = await hotelStorage.getData(input, name);
         if (!cacheData || !cacheData.data.length) {
             this.getHotelRealTimeData(id, input, name);
@@ -323,4 +332,23 @@ function matchChannel(target, origin, defaultArr) {
     } else {
         return result;
     }
+}
+
+
+function checkParams(params) {
+    console.log("checkParams11 checkParams11 checkParams11 ====> ", params);
+
+    if (params.checkInDate) {
+        params.checkInDate = moment(params.checkInDate).format("YYYY-MM-DD");
+    }
+
+    if (params.checkOutDate) {
+        params.checkOutDate = moment(params.checkOutDate).format("YYYY-MM-DD");
+    }
+
+    if (params.leaveDate) {
+        params.leaveDate = moment(params.leaveDate).format("YYYY-MM-DD");
+    }
+    console.log("checkParams checkParams checkParams ====> ", params);
+    return params;
 }

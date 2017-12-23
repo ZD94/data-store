@@ -75,7 +75,7 @@ export class HotelStorage {
             //     '$gte': new Date( Date.now() - CACHE_DURATION)
             // }
         }
-
+        console.log("HotelStorage  HotelStorage ====>", where2);
         let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
 
         return result;
