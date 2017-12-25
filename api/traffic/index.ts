@@ -13,11 +13,6 @@ import { Param } from "../../model/event";
 import Logger from '@jingli/logger';
 let logger = new Logger("data-store");
 
-export interface ISearchTicketParams {
-    leaveDate: string;
-    originPlace: string;
-    destination: string;
-}
 
 export class TicketStorage {
     constructor(private model) {

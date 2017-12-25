@@ -12,6 +12,10 @@
     "experimentalDecorators": true,
     "noImplicitUseStrict": false,
     "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "strict": true,
     "baseUrl": ".",
     "lib": [
       "es2015",
@@ -20,9 +24,7 @@
   },
   "compilerOptionsNotUsing": {
     "emitDecoratorMetadata": true,
-    "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "suppressImplicitAnyIndexErrors": true
   },
   "exclude": [
     "node_modules",

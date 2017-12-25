@@ -8,6 +8,7 @@ import { AbstractDataSupport, DataStorage } from "../data-support";
 import { SearchParams, TASK_NAME } from "../types";
 import { IHotel, ITicket } from "@jingli/common-type";
 import sequelize = require("sequelize");
+import { ISearchHotelParams } from "model/interface";
 import Logger from '@jingli/logger';
 var logger = new Logger("data-store");
 import { Param } from "../../model/event";
@@ -17,13 +18,6 @@ import { Param } from "../../model/event";
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
 import { RequestTypes } from "../data-support"
 
-export interface ISearchHotelParams {
-    checkInDate: string;
-    checkOutDate: string;
-    city: string;
-    latitude?: number;
-    longitude?: number;
-}
 
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
     [idx: number]: T;
