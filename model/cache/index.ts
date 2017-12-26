@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-26 11:59:14
+ * @Last Modified time: 2017-12-26 15:03:31
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -32,8 +32,10 @@ export class CacheData {
         }
 
         let datas = await Promise.all(ps);
+
         let FIN = true, result = [];
         for (let item of datas) {
+            console.log("datas item .step : ", item.step);
             if (item.step != STEP.FINAL) {
                 FIN = false;
             }
@@ -45,6 +47,9 @@ export class CacheData {
         } else {
             params.data = common.trafficMergeData(result);
         }
+
+        params.step = FIN ? STEP.FINAL : STEP.CACHE;
+        console.log("params.step   ", params.step);
         return params;
     }
 
@@ -70,6 +75,8 @@ export class CacheData {
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
+
+        console.log("diffTime  hotel : ", diffTime);
         if (diffTime > HOTLE_CACHE_TIME) {
             if (isOrigin) {
                 return {
@@ -79,7 +86,7 @@ export class CacheData {
             }
 
             // 拉取及时数据，创建promise
-
+            console.log("拉取及时数据，创建promise");
             FIN = false;
         }
         return {
