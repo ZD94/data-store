@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-17 11:48:17 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-24 16:46:31
+ * @Last Modified time: 2017-12-25 18:41:16
  * @content what is the content of this file. */
 
 
@@ -20,16 +20,18 @@ export class FullPriceService extends TrafficPrice {
 
     async getFullPriceData(params: DataOrder) {
         console.log(" getFullPriceData ")
+        let input;
         if (params.type == BudgetType.HOTEL) {
-            return await this.getHotelFullPrice(params);
+            input = params.input as ISearchHotelParams;
+            return await this.getHotelFullPrice(input);
         } else {
-            return await this.getTrafficFullPrice(params);
+            input = params.input as ISearchTicketParams;
+            return await this.getTrafficFullPrice(input);
         }
     }
 
-    async getTrafficFullPrice(params: DataOrder, isNotOrigin?: Boolean) {
+    async getTrafficFullPrice(input: ISearchTicketParams, isNotOrigin?: Boolean): Promise<{ step: STEP, data: any[] }> {
         let result = [];
-        let input = params.input as ISearchTicketParams;
         let flightData = await this.getFlightFullPrice({
             from: input.originPlace,
             to: input.destination
@@ -67,13 +69,17 @@ export class FullPriceService extends TrafficPrice {
             result.push(data);
         }
 
-        params.data = result;
-        return params;
+        return {
+            data: result,
+            step: STEP.FULL
+        }
     }
 
-    async getHotelFullPrice(params: DataOrder, isNotOrigin?: Boolean) {
-        params.data = testHotel;
-        return params;
+    async getHotelFullPrice(input: ISearchHotelParams, isNotOrigin?: Boolean) {
+        return {
+            data: testHotel,
+            step: STEP.FULL
+        }
     }
 }
 

@@ -11,7 +11,6 @@ import sequelize = require("sequelize");
 import { ISearchHotelParams } from "model/interface";
 import Logger from '@jingli/logger';
 var logger = new Logger("data-store");
-import { Param } from "../../model/event";
 
 
 //缓存失效时间
@@ -79,22 +78,29 @@ export class HotelStorage {
 export let hotelStorage = new HotelStorage(DB.models['CacheHotel']);
 
 export class HotelRealTimeData {
-    async getData(input: ISearchHotelParams, name: string) {
+    async getData(input: ISearchHotelParams, name: string): Promise<any[]> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
         let ret;
         try {
+            console.log("begin dtask-mgr : ", name, input)
             ret = await API["dtask_mgr"].runTask({ name, input });
-            console.log("HotelRealTimeData, go to the dtask_mgr");
+            console.log("HotelRealTimeData, go to the dtask_mgr ret : ", ret);
         } catch (err) {
             logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
             return [];
         }
 
-        if (ret) {
+        if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
         }
+        console.log("HotelRealTimeData getData : ", ret.length);
+
+        if (!ret.length) {
+            ret = [111, 222, 333, 444];
+        }
+
         return ret;
     }
 }

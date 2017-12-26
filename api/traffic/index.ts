@@ -9,7 +9,7 @@ import { ITicket } from "@jingli/common-type";
 import config from "@jingli/config";
 import { DB } from '@jingli/database';
 import { RequestTypes } from "../data-support";
-import { Param } from "../../model/event";
+import { ISearchTicketParams } from "model/interface";
 import Logger from '@jingli/logger';
 let logger = new Logger("data-store");
 

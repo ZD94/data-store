@@ -2,99 +2,90 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-24 17:44:21
+ * @Last Modified time: 2017-12-26 12:14:31
  * @content what is the content of this file. */
 
-import DataEvent from "../../model/event";
 import cache from "@jingli/cache";
 import { STEP, BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
 import common from 'model/util';
-import { testTraffic, testHotel, fullPriceService } from "model/fullPrice";
+import { fullPriceService } from "model/fullPrice";
 import cacheData from "model/cache";
-import API from "@jingli/dnode-api";
+import finalData from "model/final";
 
 let getData = {
-    async getData(params: DataOrder) {
-        params = await this.checkParams(params);
+    async search_data(params: DataOrder) {
+        params = await common.checkParams(params);
         switch (params.step) {
             case STEP.FULL:
                 return await fullPriceService.getFullPriceData(params);
             case STEP.CACHE:
                 return await cacheData.getCacheData(params);
             case STEP.FINAL:
-
-                break;
+                return await finalData.getFinalData(params);
         }
-    },
-
-    async checkParams(params: DataOrder) {
-        if (params.type == BudgetType.HOTEL) {
-            let input = params.input as ISearchHotelParams;
-            let city = await API['place'].getCityInfo({ cityCode: input.city });
-            if (!input.latitude || !input.longitude) {
-                input.latitude = city.latitude;
-                input.longitude = city.longitude;
-            }
-
-            params.isAbroad = city.isAbroad;
-        }
-
-        if (params.type == BudgetType.TRAFFICT) {
-            let input = params.input as ISearchTicketParams;
-            let originPlace = API['place'].getCityInfo({ cityCode: input.originPlace });
-            let destination = API['place'].getCityInfo({ cityCode: input.destination });
-            let ps = await Promise.all([await originPlace, await destination]);
-            let isAbroad = false;
-            for (let city of ps) {
-                if (city.isAbroad) {
-                    isAbroad = true;
-                    break;
-                }
-            }
-
-            params.isAbroad = isAbroad;
-        }
-
-        params.channels = common.switchChannel(params.type, params.channels, params.isAbroad);
-
-        return params;
     }
 };
 
 export default getData;
 
+// setTimeout(async () => {
+
+//     let params = {
+//         type: BudgetType.HOTEL,
+//         channels: ["ctrip-hotel-domestic"],
+//         input: {
+//             checkInDate: "2018-1-22",
+//             checkOutDate: "2018-1-24",
+//             city: "CT_131"
+//         },
+//         step: STEP.FINAL,
+//         data: [],
+//         isAbroad: false
+//     } as DataOrder;
+//     // finalData.createRealTimeData(params, "ctrip-hotel-domestic")
+
+//     setTimeout(async () => {
+//         try {
+//             let result = await getData.getData(params);
+//             console.log("finnaly get the result : ", result);
+
+//         } catch (e) {
+//             console.log(e);
+//         }
+//     }, 6000);
+
+//     // let result = await getData.getData(params);
+//     // console.log("result =====>", result);
+
+// }, 5000);
+
+
+
+
+
 /* setTimeout(async () => {
-    let result = await getData.getData({
-        type: BudgetType.HOTEL,
-        channels: [],
-        input: {
-            checkInDate: "2017-12-22",
-            checkOutDate: "2017-12-24",
-            city: "CT_289"
-        },
-        step: STEP.CACHE,
-        data: []
-    });
 
-    console.log("setTimeout hotel ======> ", result);
-}, 3000); */
-
-
-
-
-
-/* setTimeout(async () => {
-    let result = await getData.getData({
+    let params = {
         type: BudgetType.TRAFFICT,
-        channels: [],
+        channels: ["ctrip-hotel-domestic"],
         input: {
-            leaveDate: "2017-12-22",
+            leaveDate: "2018-1-22",
             originPlace: "CT_179",
             destination: "CT_075"
         },
+        step: STEP.FINAL,
         data: [],
-        step: STEP.CACHE
-    });
+        isAbroad: false
+    } as DataOrder;
+    // finalData.createRealTimeData(params, "ctrip-hotel-domestic")
 
-    console.log("setTimeout traffic ======> ", result);
+    // setTimeout(async () => {
+    try {
+        let result = await getData.getData(params);
+        console.log("finnaly get the result : ", result);
+
+    } catch (e) {
+        console.log(e);
+    }
+    // }, 6000);
 }, 4000); */

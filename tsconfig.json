@@ -12,10 +12,10 @@
     "experimentalDecorators": true,
     "noImplicitUseStrict": false,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "strict": false,
     "baseUrl": ".",
     "lib": [
       "es2015",
@@ -24,7 +24,8 @@
   },
   "compilerOptionsNotUsing": {
     "emitDecoratorMetadata": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": true
   },
   "exclude": [
     "node_modules",
@@ -35,7 +36,8 @@
     "*.bak",
     "*.tar.gz",
     "http/test",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "model/event/**/*.ts"
   ],
   "excludeNotUsing": []
 }
