@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-26 12:09:42
+ * @Last Modified time: 2017-12-26 16:13:34
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -27,7 +27,7 @@ export class Common {
             if (isAbroad) {
                 return matchChannel(channels, TASK_NAME.FLIGHT_ABROAD, TASK_NAME.FLIGHT_ABROAD_DEFAULT);
             } else {
-                return matchChannel(channels, TASK_NAME.FLIGHT, TASK_NAME.FLIGHT_DEFAULT);
+                return matchChannel(channels, [...TASK_NAME.FLIGHT, ...TASK_NAME.TRAIN], [...TASK_NAME.FLIGHT_DEFAULT, ...TASK_NAME.TRAIN]);
             }
         }
     }

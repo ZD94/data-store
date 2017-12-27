@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-26 15:03:31
+ * @Last Modified time: 2017-12-27 20:09:20
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -33,13 +33,25 @@ export class CacheData {
 
         let datas = await Promise.all(ps);
 
-        let FIN = true, result = [];
-        for (let item of datas) {
-            console.log("datas item .step : ", item.step);
-            if (item.step != STEP.FINAL) {
-                FIN = false;
+        /* 
+         * 当存在多个 channel 数据时，有一个为FINAL其余的都不要；没有时全部输出；
+         * 应对场景，如 上海到杭州，飞机的始终没有，只有火车频道的有； 
+         **/
+        let result = [];
+        for(let item of datas){
+            if(item.step == STEP.FINAL){
+                result.push(...item.data);
             }
-            result.push(...item.data);
+        }
+
+        let FIN = true;
+        if(result.length){
+
+        }else{
+            FIN = false;
+            for (let item of datas) {
+                result.push(...item.data);
+            }
         }
 
         if (params.type == BudgetType.HOTEL) {
@@ -49,7 +61,6 @@ export class CacheData {
         }
 
         params.step = FIN ? STEP.FINAL : STEP.CACHE;
-        console.log("params.step   ", params.step);
         return params;
     }
 

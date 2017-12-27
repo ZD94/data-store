@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-24 16:49:08 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-26 11:54:29
+ * @Last Modified time: 2017-12-27 20:09:45
  * @content what is the content of this file. */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -45,12 +45,26 @@ export class FinalData extends RealData {
         });
 
         let datas = await Promise.all(ps);
-        let FIN = true, result = [];
+
+        /* 
+         * 当存在多个 channel 数据时，有一个为FINAL其余的都不要；没有时全部输出；
+         * 应对场景，如 上海到杭州，飞机的始终没有，只有火车频道的有； 
+         **/
+        let result = [];
         for (let item of datas) {
-            if (item.step != STEP.FINAL) {
-                FIN = false;
+            if (item.step == STEP.FINAL) {
+                result.push(...item.data);
             }
-            result.push(...item.data);
+        }
+
+        let FIN = true;
+        if (result.length) {
+
+        } else {
+            FIN = false;
+            for (let item of datas) {
+                result.push(...item.data);
+            }
         }
 
         if (params.type == BudgetType.HOTEL) {
@@ -58,6 +72,8 @@ export class FinalData extends RealData {
         } else {
             params.data = common.trafficMergeData(result);
         }
+
+        params.step = FIN ? STEP.FINAL : STEP.CACHE;
         return params;
     }
 
