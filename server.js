@@ -4,6 +4,5 @@
 'use strict';
 
 require('ts-node').register({ fast: true });
-require('app-module-path').addPath(__dirname);
 
 require('./main.ts');
