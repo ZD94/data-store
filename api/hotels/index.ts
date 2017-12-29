@@ -68,7 +68,6 @@ export class HotelStorage {
             //     '$gte': new Date( Date.now() - CACHE_DURATION)
             // }
         }
-        console.log("HotelStorage  HotelStorage ====>", where2);
         let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
 
         return result;
@@ -84,9 +83,7 @@ export class HotelRealTimeData {
         }
         let ret;
         try {
-            console.log("begin dtask-mgr : ", name, input)
             ret = await API["dtask_mgr"].runTask({ name, input });
-            console.log("HotelRealTimeData, go to the dtask_mgr ret : ", ret);
         } catch (err) {
             logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
             return [];
@@ -94,11 +91,6 @@ export class HotelRealTimeData {
 
         if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
-        }
-        console.log("HotelRealTimeData getData : ", ret.length);
-
-        if (!ret.length) {
-            ret = [111, 222, 333, 444];
         }
 
         return ret;

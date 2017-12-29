@@ -38,16 +38,14 @@ export class CacheData {
          * 应对场景，如 上海到杭州，飞机的始终没有，只有火车频道的有； 
          **/
         let result = [];
-        for(let item of datas){
-            if(item.step == STEP.FINAL){
+        for (let item of datas) {
+            if (item.step == STEP.FINAL) {
                 result.push(...item.data);
             }
         }
 
         let FIN = true;
-        if(result.length){
-
-        }else{
+        if (!result.length) {
             FIN = false;
             for (let item of datas) {
                 result.push(...item.data);

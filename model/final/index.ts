@@ -58,9 +58,7 @@ export class FinalData extends RealData {
         }
 
         let FIN = true;
-        if (result.length) {
-
-        } else {
+        if (!result.length) {
             FIN = false;
             for (let item of datas) {
                 result.push(...item.data);

@@ -22,6 +22,8 @@ let getData = {
                 return await cacheData.getCacheData(params);
             case STEP.FINAL:
                 return await finalData.getFinalData(params);
+            default:
+                throw new Error("not has the Step : " + params.step);
         }
     }
 };

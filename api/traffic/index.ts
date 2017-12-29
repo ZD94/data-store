@@ -50,9 +50,6 @@ export class TicketStorage {
             data: {
                 ne: '[]'
             }
-            // created_at: {
-            //     '$gte': new Date(Date.now() - 10 * 60 * 1000)
-            // }
         }
         let result = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
         return result;
@@ -68,7 +65,6 @@ export class TrafficRealTimeData {
         }
         let ret;
         try {
-            console.log("TrafficRealTimeData, go to the dtask_mgr     ", name, input);
             ret = await API["dtask_mgr"].runTask({ name, input });
         } catch (err) {
             logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
