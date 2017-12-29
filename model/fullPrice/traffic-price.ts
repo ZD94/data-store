@@ -27,6 +27,9 @@ export class TrafficPrice {
         });
         if (!price)
             return price;
+        if (price.length == 0) {
+            console.log("TrafficPrice 全价数据没有", params);
+        }
         return price;
     }
 
@@ -54,15 +57,5 @@ export class TrafficPrice {
 }
 
 const trafficPrice = new TrafficPrice();
-
-/* setTimeout(async () => {
-    let result = await trafficPrice.getFlightFullPrice({
-        from: "CT_179",
-        to: "CT_075"
-    });
-
-    console.log(1234, result);
-}, 4000); */
-
 
 export default trafficPrice;

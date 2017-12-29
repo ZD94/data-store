@@ -8,22 +8,15 @@ import { AbstractDataSupport, DataStorage } from "../data-support";
 import { SearchParams, TASK_NAME } from "../types";
 import { IHotel, ITicket } from "@jingli/common-type";
 import sequelize = require("sequelize");
+import { ISearchHotelParams } from "model/interface";
 import Logger from '@jingli/logger';
 var logger = new Logger("data-store");
-import { Param } from "../../model/event";
 
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
 import { RequestTypes } from "../data-support"
 
-export interface ISearchHotelParams {
-    checkInDate: string;
-    checkOutDate: string;
-    city: string;
-    latitude?: number;
-    longitude?: number;
-}
 
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
     [idx: number]: T;
@@ -75,7 +68,6 @@ export class HotelStorage {
             //     '$gte': new Date( Date.now() - CACHE_DURATION)
             // }
         }
-
         let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
 
         return result;
@@ -85,22 +77,22 @@ export class HotelStorage {
 export let hotelStorage = new HotelStorage(DB.models['CacheHotel']);
 
 export class HotelRealTimeData {
-    async getData(input: ISearchHotelParams, name: string) {
+    async getData(input: ISearchHotelParams, name: string): Promise<any[]> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
         let ret;
         try {
             ret = await API["dtask_mgr"].runTask({ name, input });
-            console.log("HotelRealTimeData, go to the dtask_mgr");
         } catch (err) {
             logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
             return [];
         }
 
-        if (ret) {
+        if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
         }
+
         return ret;
     }
 }
