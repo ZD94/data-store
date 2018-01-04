@@ -99,7 +99,7 @@ deploy:demo:
     url: https://demo.jingli365.com/proj/svr-data-store/
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
+    JL_APP_POSTGRES: "postgres://demo:d3m0jingli365@dockerhost/data-store"
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "14108"
   script:
