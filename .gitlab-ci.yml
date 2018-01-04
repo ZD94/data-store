@@ -90,6 +90,26 @@ deploy:test:
     - echo deploy to https://t.jingli365.com/proj/svr-data-store/
     - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14206:4106
 
+deploy:demo:
+  stage: deploy
+  only:
+    - /^master|test|release|demo$/
+  environment:
+    name: demo
+    url: https://demo.jingli365.com/proj/svr-data-store/
+  variables:
+    GIT_STRATEGY: none
+    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
+    JL_APP_DTASKMGR_ADDR: dockerhost
+    JL_APP_DTASKMGR_PORT: "14108"
+  script:
+    - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
+    - docker pull $DOCKER_CI_NAME
+    - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
+    - docker push $DOCKER_BRANCH_NAME
+    - echo deploy to https://demo.jingli365.com/proj/svr-data-store/
+    - ssh test@demo.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14206:4106
+
 deploy:release:
   stage: deploy
   only:
