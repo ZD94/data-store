@@ -49,7 +49,7 @@
     "mods": {
       "sequelize": {
         "prefix": "${{appName}}_sql_",
-        "console": true
+        "console": false
       },
       "sqlinit": {
         "prefix": "${{appName}}_sql_",
