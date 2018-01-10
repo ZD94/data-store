@@ -9,6 +9,7 @@ import * as path from 'path';
 import config from "@jingli/config";
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
+import fs = require("fs");
 Logger.init(config.logger);
 let logger = new Logger('dtask');
 
@@ -75,7 +76,20 @@ zone.forkStackTrace()
         logger.info('API initialized.');
 
         //开启http服务
-        http.createServer(app).listen(config.httpPort, () => {
+        let server = http.createServer(app);
+        let PORT = config.socket_file || config.httpPort;
+
+        server.on('listening', function () {
+            if (!/^\d+$/.test(PORT)) {
+                fs.chmodSync(PORT, '777')
+            }
+        });
+
+        server.on('error', (err) => {
+            throw err;
+        })
+
+        server.listen(PORT, () => {
             console.log("http server running ", config.httpPort);
         });
     });

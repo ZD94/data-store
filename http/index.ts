@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-10 19:27:38
+ * @Last Modified time: 2018-01-10 21:18:21
  * @content what is the content of this file. */
 
 
@@ -29,6 +29,9 @@ app.post("/searchData", async (req: any, res: any, next: any) => {
     res.json(result);
 });
 
+app.get("/test", (req, res, next) => {
+    res.send("test is ok.");
+});
 
 function usingTime(req: any, res: any, next: any) {
     req.enterTime = Date.now();
