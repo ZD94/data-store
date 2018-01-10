@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-27 20:09:20
+ * @Last Modified time: 2018-01-08 16:33:14
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -17,7 +17,6 @@ import { fullPriceService } from "model/fullPrice";
 
 export class CacheData {
     async getCacheData(params: DataOrder) {
-        console.log("getCacheData");
         let ps: Promise<{ step: STEP, data: any[] }>[];
         if (params.type == BudgetType.HOTEL) {
             let input = params.input as ISearchHotelParams;
@@ -75,8 +74,6 @@ export class CacheData {
             }
             FIN = false;
 
-            // 拉取及时数据，创建promise
-
             console.log("缓存中没有数据，走全价逻辑");
             // 缓存中没有数据，走全价逻辑
             return await fullPriceService.getHotelFullPrice(input, true);
@@ -94,8 +91,6 @@ export class CacheData {
                 }
             }
 
-            // 拉取及时数据，创建promise
-            console.log("拉取及时数据，创建promise");
             FIN = false;
         }
         return {
@@ -118,14 +113,12 @@ export class CacheData {
             }
 
             FIN = false;
-            // 拉取及时数据，创建promise
-
 
             // 缓存中没有数据，走全价逻辑
             return await fullPriceService.getTrafficFullPrice(input, true);
         }
 
-        console.log("cacheData.data.length   ", cacheData.data.length);
+        console.log("trafficCache data.length   ", cacheData.data.length);
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
@@ -136,8 +129,6 @@ export class CacheData {
                     step: STEP.CACHE
                 }
             }
-            // 拉取及时数据，创建promise
-
             FIN = false;
         }
         return {

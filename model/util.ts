@@ -2,13 +2,13 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-26 16:13:34
+ * @Last Modified time: 2018-01-08 15:58:18
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
 import { TASK_NAME } from '../api/types';
 let _ = require("lodash");
-import API from "@jingli/dnode-api";
+import { CityService } from "model/city";
 
 
 export class Common {
@@ -69,7 +69,7 @@ export class Common {
     async checkParams(params: DataOrder) {
         if (params.type == BudgetType.HOTEL) {
             let input = params.input as ISearchHotelParams;
-            let city = await API['place'].getCityInfo({ cityCode: input.city });
+            let city = await CityService.getCity(input.city);
             if (!input.latitude || !input.longitude) {
                 input.latitude = city.latitude;
                 input.longitude = city.longitude;
@@ -80,8 +80,8 @@ export class Common {
 
         if (params.type == BudgetType.TRAFFICT) {
             let input = params.input as ISearchTicketParams;
-            let originPlace = API['place'].getCityInfo({ cityCode: input.originPlace });
-            let destination = API['place'].getCityInfo({ cityCode: input.destination });
+            let originPlace = CityService.getCity(input.originPlace);
+            let destination = CityService.getCity(input.destination);
             let ps = await Promise.all([await originPlace, await destination]);
             let isAbroad = false;
             for (let city of ps) {
