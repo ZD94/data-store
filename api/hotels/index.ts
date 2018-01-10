@@ -4,7 +4,7 @@
 
 import { DB } from '@jingli/database';
 import API from "@jingli/dnode-api";
-import { AbstractDataSupport, DataStorage } from "../data-support";
+import { AbstractDataSupport, DataStorage, RequestTypes } from "../data-support";
 import { SearchParams, TASK_NAME } from "../types";
 import { IHotel, ITicket } from "@jingli/common-type";
 import sequelize = require("sequelize");
@@ -15,7 +15,6 @@ var logger = new Logger("data-store");
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
-import { RequestTypes } from "../data-support"
 
 
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
@@ -98,37 +97,3 @@ export class HotelRealTimeData {
 }
 
 export let hotelRealTimeData = new HotelRealTimeData();
-
-
-
-
-
-
-
-/* 暂时保留，兼容之前的方法 */
-export class HotelSupport extends AbstractDataSupport<IHotel> {
-
-    constructor(storage) {
-        super(storage);
-    }
-
-    async search_hotels(params: ISearchHotelParams) {
-        let { city, latitude, longitude, checkInDate, checkOutDate } = params;
-        let cityObj = await API['place'].getCityInfo({ cityCode: city });
-        if (!latitude || !longitude) {
-            params.latitude = cityObj.latitude;
-            params.longitude = cityObj.longitude;
-        }
-
-        let result: IHotel[] = [];
-        if (!cityObj.isAbroad) {
-            result = await this.getData(TASK_NAME.HOTEL, params, RequestTypes.hotel);
-        }
-        if (cityObj.isAbroad) {
-            result = await this.getData(TASK_NAME.HOTEL_ABROAD, params, RequestTypes.hotel);
-        }
-        return result;
-    }
-}
-
-export var hotelSupport = new HotelSupport(hotelStorage);

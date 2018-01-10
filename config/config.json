@@ -10,10 +10,6 @@
     "url": "${JL_APP_REDIS}"
   },
   "hosts": {
-    "place": {
-      "addr": "l.jingli365.com",
-      "port": 14101
-    },
     "dtask": {
       "addr": "l.jingli365.com",
       "port": 14108
@@ -22,15 +18,6 @@
   "api": {
     "debug": true,
     "remotes": [
-      {
-        "connect": {
-          "host": "${{hosts.place.addr}}",
-          "port": "${{hosts.place.port}}"
-        },
-        "modules": [
-          "place"
-        ]
-      },
       {
         "connect": {
           "host": "${{hosts.dtask.addr}}",
@@ -64,5 +51,6 @@
       }
     }
   },
-  "listen": "4106"
+  "listen": "4106",
+  "placeAPI": "https://j.jingli365.com/proj/svr-place"
 }

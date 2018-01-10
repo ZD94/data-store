@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-09 21:22:12 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-24 16:31:16
+ * @Last Modified time: 2018-01-08 16:46:57
  * @content 提供全价数据服务. */
 
 
@@ -91,19 +91,7 @@ export let trainModel = {
                     "price": 730,
                     "remainNumber": 100
                 }
-            ],
-            "bookUrl": "http://touch.train.qunar.com/trainList_Card.html?startCity=上海&startStation=上海&endCity=北京&endStation=北京南&date=2017-12-21&trainNum=D314&searchType=stasta&sort=&seatType=二等座&searchArr=北京&searchDep=上海&needRecommondLess=1&bd_source=3w",
-            "deeplinkData": {
-                "date": "2017-12-21",
-                "endCity": "北京",
-                "seatType": "二等座",
-                "trainNum": "D314",
-                "searchArr": "北京",
-                "searchDep": "上海",
-                "startCity": "上海",
-                "endStation": "北京南",
-                "startStation": "上海"
-            }
+            ]
         }
     ],
     "duration": 707,
