@@ -52,5 +52,6 @@
     }
   },
   "listen": "4106",
+  "httpPort": "4107",
   "placeAPI": "https://j.jingli365.com/proj/svr-place"
 }

@@ -34,12 +34,14 @@ database.init(config.postgres.url);
 import cluster = require("cluster");
 import os = require("os");
 import { loadModel, sync } from "./db";
+loadModel(path.join(__dirname, 'api'));
 const pkg = require("./package.json");
+
+import app from "./http";
+const http = require("http");
+
 zone.forkStackTrace()
     .run(async function () {
-        //加载model
-        await loadModel(path.join(__dirname, 'api'));
-        //同步数据库
         if (cluster.isMaster) {
             await sync({ force: false });
             await API.initSql(path.join(__dirname, 'api'), config.api);
@@ -71,4 +73,9 @@ zone.forkStackTrace()
         await API.startServices(config.listen);
         logger.info(`worker#${process.pid} API listen on ${config.listen}`);
         logger.info('API initialized.');
+
+        //开启http服务
+        http.createServer(app).listen(config.httpPort, () => {
+            console.log("http server running ", config.httpPort);
+        });
     });
