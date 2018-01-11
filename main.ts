@@ -43,9 +43,11 @@ const http = require("http");
 
 zone.forkStackTrace()
     .run(async function () {
+        let PORT = config.socket_file || config.httpPort;
         if (cluster.isMaster) {
             await sync({ force: false });
             await API.initSql(path.join(__dirname, 'api'), config.api);
+            let result = await checkListeningPort(PORT);
         }
         if (config.cluster && cluster.isMaster) {
             process.title = `${config.appName || pkg.name}-master`;
@@ -77,8 +79,6 @@ zone.forkStackTrace()
 
         //开启http服务
         let server = http.createServer(app);
-        let PORT = config.socket_file || config.httpPort;
-
         server.on('listening', function () {
             if (!/^\d+$/.test(PORT)) {
                 fs.chmodSync(PORT, '777')
@@ -93,3 +93,42 @@ zone.forkStackTrace()
             console.log("http server running ", config.httpPort);
         });
     });
+
+
+var fs = require('fs');
+var net = require('net');
+function checkListeningPort(path) {
+
+    var conn = {} as { port: any; path: any };
+    if (/^\d+$/.test(path)) {
+        conn.port = path;
+    } else {
+        conn.path = path;
+        if (!fs.existsSync(path)) {
+            return Promise.resolve();
+        }
+    }
+
+    return new Promise(function (resolve, reject) {
+
+        var client = net.connect(conn);
+        client.on('error', function (e) {
+            if (e.code == 'ECONNREFUSED') {
+                if (conn.path) {
+                    fs.unlinkSync(conn.path, function () {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            } else {
+                logger.error(e);
+                reject(e);
+            }
+        });
+        client.on('connect', function () {
+            reject(new Error('Address is in use: ' + path));
+            client.end();
+        });
+    });
+}
