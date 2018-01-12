@@ -106,6 +106,9 @@ function checkListeningPort(path) {
         conn.path = path;
         if (!fs.existsSync(path)) {
             return Promise.resolve();
+        } else {
+            fs.unlinkSync(path);
+            return Promise.resolve();
         }
     }
 
