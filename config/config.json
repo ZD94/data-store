@@ -52,6 +52,6 @@
     }
   },
   "listen": "4106",
-  "socket_file": "${{rootDir}}/web.sock",
+  "socket_file": "${{rootDir}}/dataStoreWeb.sock",
   "placeAPI": "https://j.jingli365.com/proj/svr-place"
 }

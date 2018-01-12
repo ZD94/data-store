@@ -45,6 +45,7 @@ zone.forkStackTrace()
     .run(async function () {
         let PORT = config.socket_file || config.httpPort;
         if (cluster.isMaster) {
+            console.log("PORT  === >  ", PORT);
             await sync({ force: false });
             await API.initSql(path.join(__dirname, 'api'), config.api);
             let result = await checkListeningPort(PORT);
@@ -90,12 +91,11 @@ zone.forkStackTrace()
         })
 
         server.listen(PORT, () => {
-            console.log("http server running ", config.httpPort);
+            console.log("http server running ", PORT);
         });
     });
 
 
-var fs = require('fs');
 var net = require('net');
 function checkListeningPort(path) {
 
@@ -115,14 +115,14 @@ function checkListeningPort(path) {
         client.on('error', function (e) {
             if (e.code == 'ECONNREFUSED') {
                 if (conn.path) {
-                    fs.unlinkSync(conn.path, function () {
+                    fs.unlink(conn.path, function () {
                         resolve();
                     });
                 } else {
                     resolve();
                 }
             } else {
-                logger.error(e);
+                logger.error(11111, e);
                 reject(e);
             }
         });
