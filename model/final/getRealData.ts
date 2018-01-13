@@ -14,34 +14,36 @@ export default class RealData {
     static async getHotelRealTimeData(input: ISearchHotelParams, name: string, num?: number): Promise<any[]> {
         num = num ? num : 0;
 
-        if (num && num >= 3) {
-            //已经拉取了三次，不再拉取数据
-            throw new Error("getHotelRealTimeData 3 times");
-        }
+        // if (num && num >= 3) {
+        //     //已经拉取了三次，不再拉取数据
+        //     throw new Error("getHotelRealTimeData 3 times");
+        // }
 
         try {
             return await hotelRealTimeData.getData(input, name);
         } catch (e) {
             console.error(e);
             num++;
-            await this.getHotelRealTimeData(input, name, num);
+            // await this.getHotelRealTimeData(input, name, num);
+            return [];
         }
     }
 
     static async getTrafficRealTimeData(input: ISearchTicketParams, name: string, num?: number): Promise<any[]> {
         num = num ? num : 0;
 
-        if (num && num >= 3) {
-            //已经拉取了三次，不再拉取数据
-            throw new Error("getTrafficRealTimeData 3 times");
-        }
+        // if (num && num >= 3) {
+        //     //已经拉取了三次，不再拉取数据
+        //     throw new Error("getTrafficRealTimeData 3 times");
+        // }
 
         try {
             return await trafficRealTimeData.getData(input, name);
         } catch (e) {
             console.error(e);
             num++;
-            await this.getTrafficRealTimeData(input, name, num);
+            // await this.getTrafficRealTimeData(input, name, num);
+            return [];
         }
     }
 }

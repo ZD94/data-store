@@ -11,6 +11,7 @@ import { TrafficPrice } from "./traffic-price";
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, STEP } from "model/interface";
 import { flightModel, trainModel, testHotel } from "./modelData.newone";
 import _ = require("lodash");
+import moment = require("moment");
 
 
 export class FullPriceService extends TrafficPrice {
@@ -41,6 +42,8 @@ export class FullPriceService extends TrafficPrice {
             let data = _.clone(flightModel);
             data.originPlace = input.originPlace;
             data.destination = input.destination;
+            data.departDateTime = moment(input.leaveDate).format();
+            data.arrivalDateTime = moment(data.departDateTime).add(2, "hours").format();
             if (isNotOrigin) {
                 item.price = item.price * 0.8;
             }
@@ -61,6 +64,8 @@ export class FullPriceService extends TrafficPrice {
             let data = _.clone(trainModel);
             data.originPlace = input.originPlace;
             data.destination = input.destination;
+            data.departDateTime = moment(input.leaveDate).format();
+            data.arrivalDateTime = moment(data.departDateTime).add(2, "hours").format();
             data.agents[0].cabins = [{
                 name: item.degree,
                 price: item.price,
