@@ -26,6 +26,7 @@ app.use(usingTime);
 app.post("/searchData", async (req: any, res: any, next: any) => {
     let params = req.body;
     let result = await getData.search_data(params);
+    console.log('get Step: ', result.step, " length: ", result.data.length);
     res.json(result);
 });
 
@@ -35,11 +36,10 @@ app.get("/test", (req, res, next) => {
 
 function usingTime(req: any, res: any, next: any) {
     req.enterTime = Date.now();
-    logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), " ", req.method, req.url);
     res.json = function (data: object) {
         res.setHeader('Content-Type', 'application/json');
         res.write(JSON.stringify(data));
-        logger.info(req.method, req.url, process.title, (Date.now() - req.enterTime) / 1000, "s");
+        logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), " out: ", req.method, req.url, process.title, (Date.now() - req.enterTime) / 1000, "s");
         res.end();
     }
 

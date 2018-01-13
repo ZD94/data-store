@@ -57,8 +57,8 @@ export class HotelStorage {
             });
         let where2 = {
             channel: name,
-            checkInDate: input.checkInDate,
-            checkOutDate: input.checkOutDate,
+            // checkInDate: input.checkInDate,
+            // checkOutDate: input.checkOutDate,
             city: input.city,
             data: {
                 ne: '[]'
@@ -81,13 +81,8 @@ export class HotelRealTimeData {
             input = JSON.parse(input);
         }
         let ret;
-        try {
-            ret = await API["dtask_mgr"].runTask({ name, input });
-        } catch (err) {
-            logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
-            return [];
-        }
-
+        ret = await API["dtask_mgr"].runTask({ name, input });
+        // console.log("****************", name, input);
         if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
         }

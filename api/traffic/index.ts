@@ -44,7 +44,7 @@ export class TicketStorage {
         input = <ISearchTicketParams>input;
         let where = {
             channel: name,
-            date: input.leaveDate,
+            // date: input.leaveDate,
             from: input.originPlace,
             to: input.destination,
             data: {
@@ -64,14 +64,9 @@ export class TrafficRealTimeData {
             input = JSON.parse(input);
         }
         let ret;
-        try {
-            ret = await API["dtask_mgr"].runTask({ name, input });
-        } catch (err) {
-            logger.error(`DataStore ${name}, params: ${JSON.stringify(input)} Error:`, err);
-            return [];
-        }
-
-        if (ret) {
+        ret = await API["dtask_mgr"].runTask({ name, input });
+        // console.log("****************", name, input);
+        if (ret && ret.length) {
             await trafficStorage.setData(input, name, ret);
         }
         return ret;

@@ -23,10 +23,11 @@ export class FinalData extends RealData {
     async getFinalData(params: DataOrder) {
         let ps: Promise<{ data: any[], step: STEP }>[] = params.channels.map(async (name) => {
             let promiseId = this.getPromiseId(params, name);
-
-            console.log("1a  getFinalData , promiseId : ", promiseId);
             let hasPromise = this.findThePromise(promiseId);           //可能会修改获取promise逻辑
             if (hasPromise) {
+                /**
+                 * 暂时不启用，将来可用于减少实时拉取任务。 
+                 */
                 //有promiseId，等待结束
                 let data = await this.promiseIds[promiseId];
                 return {
@@ -35,7 +36,6 @@ export class FinalData extends RealData {
                 }
             } else {
                 //没有promiseId
-                console.log("3a 没有promiseId");
                 let data = await this.notFindPromiseId(params, name);
                 return {
                     step: STEP.FINAL,
@@ -140,7 +140,6 @@ export class FinalData extends RealData {
                 return await FinalData.getTrafficRealTimeData(input, name);
             } else {
                 //ok
-                console.log("traffic ok");
                 return result.data;
             }
         } else {
@@ -152,7 +151,6 @@ export class FinalData extends RealData {
                 return await FinalData.getHotelRealTimeData(input, name);
             } else {
                 //ok
-                console.log("hotel ok");
                 return result.data;
             }
         }
