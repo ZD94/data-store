@@ -44,7 +44,7 @@ export class TicketStorage {
         input = <ISearchTicketParams>input;
         let where = {
             channel: name,
-            // date: input.leaveDate,
+            date: input.leaveDate,
             from: input.originPlace,
             to: input.destination,
             data: {

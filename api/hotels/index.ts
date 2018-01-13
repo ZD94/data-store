@@ -57,8 +57,8 @@ export class HotelStorage {
             });
         let where2 = {
             channel: name,
-            // checkInDate: input.checkInDate,
-            // checkOutDate: input.checkOutDate,
+            checkInDate: input.checkInDate,
+            checkOutDate: input.checkOutDate,
             city: input.city,
             data: {
                 ne: '[]'
