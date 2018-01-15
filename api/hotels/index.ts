@@ -78,6 +78,9 @@ export class HotelStorage extends SelectDataHelp {
         delete where.checkInDate;
         delete where.checkOutDate;
         let resultLarger = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
+        if (!resultLarger) {
+            return null;
+        }
         for (let item of resultLarger.data) {
             item.checkInDate = input.checkInDate;
             item.checkOutDate = input.checkOutDate;

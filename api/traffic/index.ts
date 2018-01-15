@@ -65,6 +65,9 @@ export class TicketStorage extends SelectDataHelp {
         /* 按照日期没有找到缓存数据，扩大搜索范围 */
         delete where.date;
         let resultLarger = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
+        if (!resultLarger) {
+            return null;
+        }
         for (let item of resultLarger.data) {
             let targetDepartDate = moment(input.leaveDate);
             let dataDepartTime = moment(item.departDateTime);
