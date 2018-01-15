@@ -95,6 +95,10 @@ export class SelectDataHelp {
             }
         }
 
+        /* place 服务问题，预防预算出错 */
+        if (cityId == '2038349') {
+            cities.push("CT_131");
+        }
         return cities;
     }
 }
