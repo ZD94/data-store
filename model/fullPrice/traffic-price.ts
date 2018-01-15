@@ -1,15 +1,17 @@
 
 import { DB } from '@jingli/database';
 import API from '@jingli/dnode-api';
+import { SelectDataHelp } from "api/data-support";
 
 export enum E_TRAFFIC_TYPE {
     FLIGHT = 1,
     TRAIN = 2
 }
 
-export class TrafficPrice {
-
-    constructor() { }
+export class TrafficPrice extends SelectDataHelp {
+    constructor() {
+        super();
+    }
 
     private async getFullPrice(params: {
         from: string,
@@ -20,8 +22,12 @@ export class TrafficPrice {
         let { from, to, type } = params;
         let price = await DB.models['TrafficPrice'].findAll({
             where: {
-                from: from,
-                to: to,
+                from: {
+                    in: await this.getSelectCitis(from)
+                },
+                to: {
+                    in: await this.getSelectCitis(to)
+                },
                 type: type
             }
         });

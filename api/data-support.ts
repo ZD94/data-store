@@ -6,6 +6,7 @@
 import API from '@jingli/dnode-api';
 import Logger from '@jingli/logger';
 import { IHotel, ITicket } from "@jingli/common-type";
+import { ICity, CityService } from 'model/city';
 var logger = new Logger("data-store");
 var _ = require("lodash");
 
@@ -70,6 +71,37 @@ export abstract class AbstractDataSupport<T extends (ITicket | IHotel)> {
         return result;
     }
 }
+
+export class SelectDataHelp {
+    async getCity(cityId: string | ICity): Promise<ICity> {
+        let city: ICity;
+        if (typeof cityId == "string") {
+            city = await CityService.getCity(cityId);
+        } else {
+            city = cityId;
+        }
+        return city;
+    }
+
+    async getSelectCitis(cityId: string | ICity): Promise<string[]> {
+        let cities = [];
+        let city = await this.getCity(cityId);
+        for (let item of city.alias) {
+            if (item.lang == "jlcityid") {
+                cities.push(item.value);
+            }
+            if (item.lang == "geonameid") {
+                cities.push(item.value);
+            }
+        }
+
+        return cities;
+    }
+}
+
+
+
+
 
 function mergeSameTickets(result: any): any {
     if (!result || !result.length) {

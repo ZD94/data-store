@@ -7,6 +7,7 @@
 
 
 import request = require("request-promise");
+import Common from "model/util";
 import config from "@jingli/config";
 import LRU = require("lru-cache");
 var cache = LRU(350);
@@ -22,6 +23,9 @@ export interface ICity {
     latitude: number;
     countryCode: string;
     location: { lat: number, lng: number };
+    alias: any[];
+    jlcityid: string;       //老版id
+    geonameid: string;      //新版id
     // code?: string;  //三字码
 }
 
@@ -34,22 +38,33 @@ export class CityService {
         }
 
         let uri = config.placeAPI + "/city/" + id;
-        let result;
-        try {
-            result = await request({
-                uri,
-                method: "get",
-                json: true
-            });
-        } catch (e) {
-            console.error("place 服务获取地点失败 : ", uri);
-            return null;
-        }
+        let result = await Common.proxyHttp({
+            uri,
+            method: "get"
+        });
+
         if (result.code != 0) {
-            throw new Error("place服务地点不存在 : " + uri);
+            console.error("place服务地点不存在 : " + uri);
+            return null;
         }
         city = result.data;
         city.isAbroad = !(city.countryCode == "CN");
+
+        /* 获取别名部分 */
+        let alias = await Common.proxyHttp({
+            uri: uri + "/alternate",
+            method: "get"
+        });
+        city.alias = alias.data;
+
+        for (let item of city.alias) {
+            if (item.lang == "jlcityid") {
+                city.jlcityid = item.value;
+            }
+            if (item.lang == "geonameid") {
+                city.geonameid = item.value;
+            }
+        }
 
         if (city) {
             cache.set(id, city);

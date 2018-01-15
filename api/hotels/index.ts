@@ -4,14 +4,15 @@
 
 import { DB } from '@jingli/database';
 import API from "@jingli/dnode-api";
-import { AbstractDataSupport, DataStorage, RequestTypes } from "../data-support";
 import { SearchParams, TASK_NAME } from "../types";
 import { IHotel, ITicket } from "@jingli/common-type";
 import sequelize = require("sequelize");
 import { ISearchHotelParams } from "model/interface";
+import { CityService, ICity } from "model/city";
+import { SelectDataHelp } from "api/data-support";
 import Logger from '@jingli/logger';
-var logger = new Logger("data-store");
 
+var logger = new Logger("data-store");
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
@@ -21,8 +22,9 @@ export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
     [idx: number]: T;
 }
 
-export class HotelStorage {
+export class HotelStorage extends SelectDataHelp {
     constructor(private model) {
+        super();
     }
 
     async setData(input: ISearchHotelParams, name: string, result) {
@@ -48,28 +50,40 @@ export class HotelStorage {
         }
         //最远距离1km
         const MAX_DISTANCE = 1000;
-        input = <ISearchHotelParams>input;
-        let where = sequelize.where(
+        /** 
+         * 不启用 按照坐标查找
+         * let where = sequelize.where(
             sequelize.fn('ST_Distance',
                 sequelize.fn('ST_GeometryFromText', `POINT(${input.longitude} ${input.latitude})`), sequelize.col('location')
             ), {
                 '$lte': MAX_DISTANCE,
-            });
-        let where2 = {
+            }); */
+        let where = {
             channel: name,
             checkInDate: input.checkInDate,
             checkOutDate: input.checkOutDate,
-            city: input.city,
+            city: {
+                in: await this.getSelectCitis(input.city)
+            },
             data: {
                 ne: '[]'
             }
-            // created_at: {
-            //     '$gte': new Date( Date.now() - CACHE_DURATION)
-            // }
         }
-        let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
+        let result = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
+        if (result) {
+            return result;
+        }
 
-        return result;
+        /* 按照入住日期没有找到缓存数据，扩大搜索范围 */
+        delete where.checkInDate;
+        delete where.checkOutDate;
+        let resultLarger = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
+        for (let item of resultLarger.data) {
+            item.checkInDate = input.checkInDate;
+            item.checkOutDate = input.checkOutDate;
+        }
+
+        return resultLarger;
     }
 }
 
@@ -92,3 +106,15 @@ export class HotelRealTimeData {
 }
 
 export let hotelRealTimeData = new HotelRealTimeData();
+
+
+
+/* setTimeout(async () => {
+    let result = await hotelStorage.getData({
+        checkInDate: '2018-11-27T10:00:00.000Z',
+        checkOutDate: '2018-11-28T01:00:00.000Z',
+        city: 'CT_289',
+        latitude: 31.1667,
+        longitude: 121.417
+    }, "ctrip-hotel-domestic")
+}, 3000); */

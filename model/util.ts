@@ -2,13 +2,15 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-08 15:58:18
+ * @Last Modified time: 2018-01-15 14:37:08
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
 import { TASK_NAME } from '../api/types';
 let _ = require("lodash");
 import { CityService } from "model/city";
+import config = require("@jingli/config");
+import * as request from "request-promise";
 
 
 export class Common {
@@ -97,6 +99,18 @@ export class Common {
         params.channels = common.switchChannel(params.type, params.channels, params.isAbroad);
 
         return params;
+    }
+
+    async proxyHttp(params: { uri: string, body?: any, method?: string, qs?: any, headers?: any, json?: boolean }
+        = { uri: '', body: {}, method: "get", qs: {}, headers: {}, json: true }) {
+        try {
+            let result = await request(params);
+            result = JSON.parse(result);
+            return result;
+        } catch (e) {
+            console.error("prxoyHttp error: ", params.uri);
+            return e;
+        }
     }
 }
 

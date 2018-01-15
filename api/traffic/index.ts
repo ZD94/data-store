@@ -4,26 +4,28 @@
 
 import API from '@jingli/dnode-api';
 import { SearchParams, TASK_NAME } from '../types';
-import { AbstractDataSupport, DataStorage } from "../data-support";
+import { SelectDataHelp } from "../data-support";
 import { ITicket } from "@jingli/common-type";
 import config from "@jingli/config";
 import { DB } from '@jingli/database';
 import { RequestTypes } from "../data-support";
 import { ISearchTicketParams } from "model/interface";
-import Logger from '@jingli/logger';
 import { setInterval, clearInterval } from 'timers';
+import Logger from '@jingli/logger';
+import * as moment from "moment";
+
 let logger = new Logger("data-store");
 
 
-export class TicketStorage {
+export class TicketStorage extends SelectDataHelp {
     constructor(private model) {
+        super();
     }
 
     async setData(input: ISearchTicketParams, name: string, result) {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
-        input = <ISearchTicketParams>input;
         if (!result.length) {
             return;
         }
@@ -42,18 +44,40 @@ export class TicketStorage {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
-        input = <ISearchTicketParams>input;
         let where = {
             channel: name,
             date: input.leaveDate,
-            from: input.originPlace,
-            to: input.destination,
+            from: {
+                in: await this.getSelectCitis(input.originPlace)
+            },
+            to: {
+                in: await this.getSelectCitis(input.destination)
+            },
             data: {
                 ne: '[]'
             }
         }
         let result = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
-        return result;
+        if (result) {
+            return result;
+        }
+
+        /* 按照日期没有找到缓存数据，扩大搜索范围 */
+        delete where.date;
+        let resultLarger = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
+        for (let item of resultLarger.data) {
+            let targetDepartDate = moment(input.leaveDate);
+            let dataDepartTime = moment(item.departDateTime);
+            let days = targetDepartDate.diff(dataDepartTime, "days");
+            item.departDateTime = dataDepartTime.add(days, "days").format();
+
+            let targetArriveDate = moment(input.leaveDate);
+            let dataArriveTime = moment(item.departDateTime);
+            let days2 = targetArriveDate.diff(dataArriveTime, "days");
+            item.arrivalDateTime = dataArriveTime.add(days2, "days").format();
+        }
+
+        return resultLarger;
     }
 }
 
@@ -91,7 +115,9 @@ export let trafficRealTimeData = new TrafficRealTimeData();
         console.log("ok + ", num++);
     }, 1000);
 
-    let result = await API["dtask_mgr"].runTask({ name, input });
-    console.log("result ====> ", result);
+    // let result = await API["dtask_mgr"].runTask({ name, input });
+
+    let result = await trafficStorage.getData(input, name);
+    console.log("result ====> ", JSON.stringify(result.data[0]));
     clearInterval(timer);
 }, 4000); */
