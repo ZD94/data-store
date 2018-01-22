@@ -16,7 +16,7 @@ import * as request from "request-promise";
 export class Common {
 
     /* 筛选数据源 */
-    switchChannel(type: BudgetType, channels: string[], isAbroad: Boolean): string[] {
+    switchChannel(type: BudgetType, channels: string[] = [], isAbroad: Boolean): string[] {
         //现阶段给出一个默认值
 
         if (type == BudgetType.HOTEL) {

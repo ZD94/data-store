@@ -1,7 +1,7 @@
 'use strict';
 import Sequelize = require("sequelize");
 
-export= function(DB: Sequelize.Sequelize, DataType: Sequelize.DataTypes) {
+export = function (DB: Sequelize.Sequelize, DataType: Sequelize.DataTypes) {
 
     let attributes = {
         id: {
@@ -39,6 +39,10 @@ export= function(DB: Sequelize.Sequelize, DataType: Sequelize.DataTypes) {
             {
                 name: "cache_ticket_from",
                 fields: ['from']
+            },
+            {
+                name: "cache_ticket_to",
+                fields: ['to']
             },
             {
                 name: 'cache_ticket_channel',

@@ -20,21 +20,22 @@ export class TrafficPrice extends SelectDataHelp {
         // degree: number[]
     }) {
         let { from, to, type } = params;
+        let where = {
+            from: {
+                in: await this.getSelectCitis(from)
+            },
+            to: {
+                in: await this.getSelectCitis(to)
+            },
+            type: type
+        };
         let price = await DB.models['TrafficPrice'].findAll({
-            where: {
-                from: {
-                    in: await this.getSelectCitis(from)
-                },
-                to: {
-                    in: await this.getSelectCitis(to)
-                },
-                type: type
-            }
+            where
         });
         if (!price)
             return price;
         if (price.length == 0) {
-            console.log("TrafficPrice 全价数据没有", params);
+            console.log("TrafficPrice 全价数据没有", where);
         }
         return price;
     }

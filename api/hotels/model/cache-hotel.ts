@@ -5,7 +5,7 @@
 'use strict';
 import sequelize = require("sequelize");
 
-export= function(DB: sequelize.Sequelize, Types: sequelize.DataTypes) {
+export = function (DB: sequelize.Sequelize, Types: sequelize.DataTypes) {
     let columns = {
         id: {
             type: Types.BIGINT,
@@ -47,6 +47,24 @@ export= function(DB: sequelize.Sequelize, Types: sequelize.DataTypes) {
         createdAt: 'created_at',
         updatedAt: 'updated_at',
         deletedAt: 'deleted_at',
+        indexes: [
+            {
+                name: 'cache_hotel_channel',
+                fields: ['channel']
+            },
+            {
+                name: 'cache_hotel_city',
+                fields: ['city']
+            },
+            {
+                name: 'cache_hotel_check_in_date',
+                fields: ['checkInDate']
+            },
+            {
+                name: 'cache_hotel_check_out_date',
+                fields: ['checkOutDate']
+            }
+        ]
     }
     return DB.define('CacheHotel', columns, options);
 }

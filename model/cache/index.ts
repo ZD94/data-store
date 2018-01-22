@@ -115,6 +115,7 @@ export class CacheData {
             FIN = false;
 
             // 缓存中没有数据，走全价逻辑
+            console.log("缓存中没有数据，走全价逻辑: ", name);
             return await fullPriceService.getTrafficFullPrice(input, true);
         }
 
