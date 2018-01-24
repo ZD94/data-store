@@ -8,7 +8,6 @@ import { SelectDataHelp } from "../data-support";
 import { ITicket } from "@jingli/common-type";
 import config from "@jingli/config";
 import { DB } from '@jingli/database';
-import { RequestTypes } from "../data-support";
 import { ISearchTicketParams } from "model/interface";
 import { setInterval, clearInterval } from 'timers';
 import Logger from '@jingli/logger';

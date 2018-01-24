@@ -2,11 +2,10 @@
  * @Author: Mr.He 
  * @Date: 2017-12-17 11:48:17 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-25 18:41:16
+ * @Last Modified time: 2018-01-22 18:03:04
  * @content what is the content of this file. */
 
 
-export * from "./modelData";
 import { TrafficPrice } from "./traffic-price";
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, STEP } from "model/interface";
 import { flightModel, trainModel, testHotel } from "./modelData.newone";

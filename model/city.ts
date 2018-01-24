@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-08 15:41:16 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-08 16:54:02
+ * @Last Modified time: 2018-01-23 16:57:07
  * @content 提供地点信息获取服务. */
 
 
@@ -10,7 +10,7 @@ import request = require("request-promise");
 import Common from "model/util";
 import config from "@jingli/config";
 import LRU = require("lru-cache");
-var cache = LRU(350);
+var cache = LRU(50);
 
 export interface ICity {
     name: string;
@@ -68,6 +68,35 @@ export class CityService {
 
         if (city) {
             cache.set(id, city);
+        }
+        return city;
+    }
+
+    static async getCityByName(name: string): Promise<ICity> {
+        name = name.replace(/\市/ig, "");
+        let city = <ICity>cache.get(name);
+        if (city) {
+            return city;
+        }
+
+        let uri = config.placeAPI + "/city/getCityByName";
+        let result = await Common.proxyHttp({
+            uri,
+            method: "get",
+            qs: {
+                name
+            }
+        });
+
+        if (result.code != 0) {
+            console.error("place服务地点不存在 : " + uri);
+            return null;
+        }
+
+        city = await this.getCity(result.data.id);
+
+        if (city) {
+            cache.set(name, city);
         }
         return city;
     }

@@ -35,7 +35,8 @@ database.init(config.postgres.url);
 import cluster = require("cluster");
 import os = require("os");
 import { loadModel, sync } from "./db";
-loadModel(path.join(__dirname, 'api'));
+import "modelSql/index";
+
 const pkg = require("./package.json");
 
 import app from "./http";

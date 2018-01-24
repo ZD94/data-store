@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-15 14:37:08
+ * @Last Modified time: 2018-01-23 20:21:20
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -101,15 +101,19 @@ export class Common {
         return params;
     }
 
-    async proxyHttp(params: { uri: string, body?: any, method?: string, qs?: any, headers?: any, json?: boolean }
-        = { uri: '', body: {}, method: "get", qs: {}, headers: {}, json: true }) {
+    async proxyHttp(params: { uri: string, body?: any, method?: string, qs?: any, headers?: any, json?: boolean }) {
+        params.json = true;
+        params.method = params.method || "get";
         try {
             let result = await request(params);
-            result = JSON.parse(result);
+            if (typeof result == "string") {
+                result = JSON.parse(result);
+            }
             return result;
         } catch (e) {
-            console.error("prxoyHttp error: ", params.uri);
-            return e;
+            console.error("prxoyHttp error: ", params.uri, params.body, params.qs);
+            console.error(e);
+            return null;
         }
     }
 }
