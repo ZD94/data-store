@@ -53,5 +53,6 @@
   },
   "listen": "4106",
   "socket_file": "${{rootDir}}/web.sock",
-  "placeAPI": "https://j.jingli365.com/proj/svr-place"
+  "placeAPI": "https://j.jingli365.com/proj/svr-place",
+  "dtaskMgr": "http://l.jingli365.com:15000"
 }

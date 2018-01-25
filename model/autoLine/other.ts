@@ -30,10 +30,3 @@ let addLines = async (cities) => {
         console.log(result.msg, item[0], item[1]);
     }
 }
-
-
-// setTimeout(async () => {
-//     // console.log(autoLine);
-
-//     // await addLines(Cities);
-// }, 3000);

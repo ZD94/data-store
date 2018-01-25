@@ -89,11 +89,42 @@ export class CityService {
         });
 
         if (result.code != 0) {
-            console.error("place服务地点不存在 : " + uri);
+            console.error("place服务地点不存在 : " + uri + name);
             return null;
         }
 
         city = await this.getCity(result.data.id);
+
+        if (city) {
+            cache.set(name, city);
+        }
+        return city;
+    }
+
+    static async searchCity(name: string): Promise<ICity> {
+        name = name.replace(/\市/ig, "");
+        let city = <ICity>cache.get(name);
+        if (city) {
+            return city;
+        }
+
+        let uri = config.placeAPI + "/city/search";
+        let result = await Common.proxyHttp({
+            uri,
+            method: "get",
+            qs: {
+                keyword: name
+            }
+        });
+        if (result.code != 0) {
+            console.error("place服务地点不存在 : " + uri + name);
+            return null;
+        }
+        if (!result.data.length) {
+            return null;
+        }
+
+        city = await this.getCity(result.data[0].id);
 
         if (city) {
             cache.set(name, city);

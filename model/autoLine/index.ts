@@ -8,6 +8,7 @@
 import { CityService } from "model/city";
 import { DB } from '@jingli/database';
 import "./other";
+import "./automatic";
 
 export class AutoLine {
     model: any;
@@ -21,7 +22,7 @@ export class AutoLine {
         }
         weight = weight || 0;
 
-        let result = await Promise.all([CityService.getCityByName(fromName), CityService.getCityByName(toName)]);
+        let result = await Promise.all([CityService.searchCity(fromName), CityService.searchCity(toName)]);
         let fromCity = result[0], toCity = result[1];
         if (!fromCity || !toCity) {
             return {
@@ -43,10 +44,9 @@ export class AutoLine {
                 data: autoLines
             }
         }
-
         let autoLine = await this.model.create({
-            from: fromCity.geonameid,
-            to: toCity.geonameid,
+            from: fromCity.geonameid || fromCity.id,
+            to: toCity.geonameid || toCity.id,
             fromName: fromCity.name,
             toName: toCity.name,
             weight,
