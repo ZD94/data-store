@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-25 17:51:07
+ * @Last Modified time: 2018-01-27 18:09:10
  * @content what is the content of this file. */
 
 import Common from "model/util";
@@ -29,10 +29,12 @@ export class AutoMatic {
         let num = await this.getFreeNodes();
         console.log("tasks running =====> ", num);
         if (!num) {
-            return setTimeout(this.tasks, 5 * 1000);
+            return setTimeout(() => {
+                this.tasks();
+            }, 5 * 1000);
         }
 
-        let datas = await this.getLineDatas(1);
+        let datas = await this.getLineDatas(num);
 
         for (let item of datas) {
             console.log(item.toJSON());
