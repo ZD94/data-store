@@ -2,7 +2,6 @@
  * Created by wlh on 2017/6/9.
  */
 
-import API from '@jingli/dnode-api';
 import { SearchParams, TASK_NAME } from '../types';
 import { SelectDataHelp } from "../data-support";
 import { ITicket } from "@jingli/common-type";
@@ -12,6 +11,8 @@ import { ISearchTicketParams } from "model/interface";
 import { setInterval, clearInterval } from 'timers';
 import Logger from '@jingli/logger';
 import * as moment from "moment";
+import { DtaskMgr } from "model/dnodeAPI";
+
 
 let logger = new Logger("data-store");
 
@@ -68,11 +69,12 @@ export class TicketStorage extends SelectDataHelp {
             return null;
         }
         for (let item of resultLarger.data) {
+            /* 处理数据的日期、时间 */
+            item.departDateTime = item.departDateTime || input.leaveDate;
             let targetDepartDate = moment(input.leaveDate);
             let dataDepartTime = moment(item.departDateTime);
             let days = targetDepartDate.diff(dataDepartTime, "days");
             item.departDateTime = dataDepartTime.add(days, "days").format();
-
             let targetArriveDate = moment(input.leaveDate);
             let dataArriveTime = moment(item.departDateTime);
             let days2 = targetArriveDate.diff(dataArriveTime, "days");
@@ -85,14 +87,16 @@ export class TicketStorage extends SelectDataHelp {
 
 export let trafficStorage = new TicketStorage(DB.models['CacheTicket']);
 
-export class TrafficRealTimeData {
+export class TrafficRealTimeData extends DtaskMgr {
+    constructor() {
+        super();
+    }
     async getData(input: ISearchTicketParams, name: string) {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
         let ret;
-        ret = await API["dtask_mgr"].runTask({ name, input });
-        // console.log("****************", name, input);
+        ret = await this.runDtask(name, input);
         if (ret && ret.length) {
             await trafficStorage.setData(input, name, ret);
         }
@@ -101,25 +105,3 @@ export class TrafficRealTimeData {
 }
 
 export let trafficRealTimeData = new TrafficRealTimeData();
-
-
-/* setTimeout(async () => {
-    let name = "ctrip-train-domestic";
-    let input = {
-        leaveDate: '2018-01-27T10:00:00.000Z',
-        originPlace: '1816670',
-        destination: '1815285',
-        earliestGoBackDateTime: '2018-01-28T01:00:00.000Z',
-        latestArrivalDateTime: '2018-01-27T10:00:00.000Z'
-    };
-    let num = 0;
-    let timer = setInterval(() => {
-        console.log("ok + ", num++);
-    }, 1000);
-
-    // let result = await API["dtask_mgr"].runTask({ name, input });
-
-    let result = await trafficStorage.getData(input, name);
-    console.log("result ====> ", JSON.stringify(result.data[0]));
-    clearInterval(timer);
-}, 4000); */

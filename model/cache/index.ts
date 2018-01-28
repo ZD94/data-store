@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-08 16:33:14
+ * @Last Modified time: 2018-01-28 14:12:00
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -74,7 +74,6 @@ export class CacheData {
             }
             FIN = false;
 
-            console.log("缓存中没有数据，走全价逻辑");
             // 缓存中没有数据，走全价逻辑
             return await fullPriceService.getHotelFullPrice(input, true);
         }
@@ -115,11 +114,8 @@ export class CacheData {
             FIN = false;
 
             // 缓存中没有数据，走全价逻辑
-            console.log("缓存中没有数据，走全价逻辑: ", name);
             return await fullPriceService.getTrafficFullPrice(input, true);
         }
-
-        console.log("trafficCache data.length   ", cacheData.data.length);
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");

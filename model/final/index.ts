@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-24 16:49:08 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-27 20:09:45
+ * @Last Modified time: 2018-01-28 14:10:38
  * @content what is the content of this file. */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -136,7 +136,6 @@ export class FinalData extends RealData {
             let result = await cacheData.trafficCache(input, name, true);
             if (result.step != STEP.FINAL) {
                 //数据已过期或者无效
-                console.log("traffic 数据已过期或者无效");
                 return await FinalData.getTrafficRealTimeData(input, name);
             } else {
                 //ok
@@ -147,7 +146,6 @@ export class FinalData extends RealData {
             let result = await cacheData.hotelCache(input, name, true);
             if (result.step != STEP.FINAL) {
                 //数据已过期或者无效
-                console.log("hotel 数据已过期或者无效");
                 return await FinalData.getHotelRealTimeData(input, name);
             } else {
                 //ok

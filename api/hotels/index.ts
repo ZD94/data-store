@@ -3,7 +3,6 @@
  */
 
 import { DB } from '@jingli/database';
-import API from "@jingli/dnode-api";
 import { SearchParams, TASK_NAME } from "../types";
 import { IHotel, ITicket } from "@jingli/common-type";
 import sequelize = require("sequelize");
@@ -11,6 +10,7 @@ import { ISearchHotelParams } from "model/interface";
 import { CityService, ICity } from "model/city";
 import { SelectDataHelp } from "api/data-support";
 import Logger from '@jingli/logger';
+import { DtaskMgr } from "model/dnodeAPI";
 
 var logger = new Logger("data-store");
 
@@ -92,14 +92,16 @@ export class HotelStorage extends SelectDataHelp {
 
 export let hotelStorage = new HotelStorage(DB.models['CacheHotel']);
 
-export class HotelRealTimeData {
+export class HotelRealTimeData extends DtaskMgr {
+    constructor() {
+        super();
+    }
     async getData(input: ISearchHotelParams, name: string): Promise<any[]> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
         let ret;
-        ret = await API["dtask_mgr"].runTask({ name, input });
-        // console.log("****************", name, input);
+        ret = await this.runDtask(name, input);
         if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
         }
@@ -109,15 +111,3 @@ export class HotelRealTimeData {
 }
 
 export let hotelRealTimeData = new HotelRealTimeData();
-
-
-
-/* setTimeout(async () => {
-    let result = await hotelStorage.getData({
-        checkInDate: '2018-11-27T10:00:00.000Z',
-        checkOutDate: '2018-11-28T01:00:00.000Z',
-        city: 'CT_289',
-        latitude: 31.1667,
-        longitude: 121.417
-    }, "ctrip-hotel-domestic")
-}, 3000); */
