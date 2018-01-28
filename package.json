@@ -29,7 +29,6 @@
     "@jingli/dnode-api": "^2.0.2",
     "@jingli/logger": "^1.0.1",
     "@jingli/zone-setup": "^1.0.3",
-    "@types/moment": "^2.13.0",
     "@types/redis": "^2.8.2",
     "@types/sequelize": "^4.0.79",
     "@types/uuid": "^3.4.3",
@@ -47,8 +46,8 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.28.0",
-    "ts-node": "3.1.0",
-    "tslib": "1.8.1",
-    "uuid": "3.1.0"
+    "ts-node": "^3.1.0",
+    "tslib": "^1.8.1",
+    "uuid": "^3.1.0"
   }
 }
