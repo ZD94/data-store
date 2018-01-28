@@ -4,10 +4,8 @@
 
 'use strict';
 import API from '@jingli/dnode-api';
-import Logger from '@jingli/logger';
 import { IHotel, ITicket } from "@jingli/common-type";
 import { ICity, CityService } from 'model/city';
-var logger = new Logger("data-store");
 var _ = require("lodash");
 
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
@@ -74,57 +72,3 @@ function mergeSameTickets(result: any): any {
     }
     return mergedResults;
 }
-
-
-/* 
-export var RequestTypes = {
-    traffic: 'traffic',
-    hotel: 'hotel'
-}
-export abstract class AbstractDataSupport<T extends (ITicket | IHotel)> {
-    constructor(protected storage: DataStorage<T>) {
-        this.storage = storage;
-    }
-
-    async getData(name: string | string[], params: Object, type: string): Promise<T[]> {
-        let names: string[] = []
-        if (typeof name == 'string') {
-            names.push(name);
-        } else {
-            names = name;
-        }
-        let result: Data<T> = [];
-
-        console.log(2222);
-        console.log("getData===>", names, params);
-        let ps = names.map(async (name) => {
-            let ret = await this.storage.getData(name, params);
-
-            console.log("ret ====>", ret.length);
-            if (!ret || !ret.length) {
-                try {
-                    ret = await API['dtask_mgr'].runTask({ name: name, input: params }) as Data<T>;
-                    console.log("go to the dtask_mgr");
-                } catch (err) {
-                    logger.error(`DataStore ${name}, params: ${JSON.stringify(params)} Error:`, err);
-                }
-                if (ret) {
-                    await this.storage.setData(name, params, ret);
-                }
-            }
-            return ret;
-        });
-        let allRet: Data<T>[] = await Promise.all(ps);
-
-
-        allRet.forEach((ret) => {
-            result = [...result, ...ret] as Data<T>;
-        });
-
-        if (allRet && allRet.length >= 2 && type == RequestTypes.traffic) {
-            result = mergeSameTickets(result);
-        }
-
-        return result;
-    }
-} */

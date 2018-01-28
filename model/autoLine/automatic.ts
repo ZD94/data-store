@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-28 14:23:39
+ * @Last Modified time: 2018-01-28 14:36:30
  * @content what is the content of this file. */
 
 import Common from "model/util";
@@ -21,7 +21,7 @@ export class AutoMatic {
                     key: "Jingli2016"
                 }
             });
-            return Math.floor(result.freeNodes * 0.3);
+            return Math.floor(result.freeNodes * 0.2);
         } catch (e) {
             console.error(e);
             return 0;
@@ -41,7 +41,6 @@ export class AutoMatic {
         let completeParams = datas.map(this.completeParams);
         let ps = completeParams.map(async (completeParam) => {
             let realTimeData = await getData.search_data(completeParam.params);
-            console.log("realTimeData====>", realTimeData.data.length);
             if (realTimeData.data.length) {
                 await DB.models["AutoLines"].update(
                     {
@@ -90,32 +89,7 @@ export class AutoMatic {
 
 let autoMatic = new AutoMatic();
 
-setTimeout(async () => {
-    await autoMatic.tasks();
+setTimeout(() => {
+    console.log("自动拉取线路任务启动");
+    autoMatic.tasks();
 }, 5000);
-
-
-
-// let params = {
-//     type: BudgetType.TRAFFICT,
-//     channels: ["ctrip-hotel-domestic"],
-//     input: {
-//         leaveDate: "2018-1-22",
-//         originPlace: "CT_179",
-//         destination: "CT_075"
-//     },
-//     step: STEP.FINAL,
-//     data: [],
-//     isAbroad: false
-// } as DataOrder;
-// // finalData.createRealTimeData(params, "ctrip-hotel-domestic")
-
-// // setTimeout(async () => {
-// try {
-//     let result = await getData.getData(params);
-//     console.log("finnaly get the result : ", result);
-
-// } catch (e) {
-//     console.log(e);
-// }
-//     // }, 6000);

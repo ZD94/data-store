@@ -2,13 +2,13 @@
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-23 19:51:16
+ * @Last Modified time: 2018-01-28 14:55:11
  * @content what is the content of this file. */
 
 
 /* logger */
 import Logger from "@jingli/logger";
-var logger = new Logger('main');
+var logger = new Logger('HTTP');
 
 let express = require("express");
 let conn_timeout = require("connect-timeout");
@@ -26,8 +26,9 @@ app.use(usingTime);
 
 app.post("/searchData", async (req: any, res: any, next: any) => {
     let params = req.body;
+    let expectStep = params.step;
     let result = await getData.search_data(params);
-    console.log('get Step: ', result.step, " length: ", result.data.length);
+    logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), `expectStep: ${expectStep}, get Step: ${result.step}, length: ${result.data.length}`);
     res.json(result);
 });
 
