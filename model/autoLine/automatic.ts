@@ -10,17 +10,14 @@ import { DB } from "@jingli/database";
 import config from "@jingli/config";
 import getData from "api/getData";
 import { DataOrder, BudgetType, STEP } from 'model/interface';
+import { dtaskMgr } from "model/dnodeAPI";
 import * as moment from 'moment';
 
 export class AutoMatic {
     async getFreeNodes() {
+        let result;
         try {
-            let result = await Common.proxyHttp({
-                uri: config.dtaskMgr + "/freeNodes",
-                qs: {
-                    key: "Jingli2016"
-                }
-            });
+            result = await dtaskMgr.freeNodes();
             return Math.floor(result.freeNodes * 0.2);
         } catch (e) {
             console.error(e);
@@ -40,18 +37,20 @@ export class AutoMatic {
         let datas = await this.getLineDatas(num);
         let completeParams = datas.map(this.completeParams);
         let ps = completeParams.map(async (completeParam) => {
-            let realTimeData = await getData.search_data(completeParam.params);
-            if (realTimeData.data.length) {
-                await DB.models["AutoLines"].update(
-                    {
-                        number: ++completeParam.hotData.number
-                    }, {
-                        where: {
-                            id: completeParam.hotData.id
-                        }
-                    }
-                );
+            try {
+                await getData.search_data(completeParam.params);
+            } catch (e) {
+                console.error(e);
             }
+            await DB.models["AutoLines"].update(
+                {
+                    number: ++completeParam.hotData.number
+                }, {
+                    where: {
+                        id: completeParam.hotData.id
+                    }
+                }
+            );
         });
 
         await Promise.all(ps);
@@ -78,7 +77,7 @@ export class AutoMatic {
         return await DB.models["AutoLines"].findAll({
             where: {
                 number: {
-                    lt: 1
+                    lt: 2
                 }
             },
             order: [["number", "asc"], ["weight", "desc"]],
