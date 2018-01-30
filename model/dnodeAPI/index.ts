@@ -18,6 +18,11 @@ export class DtaskMgr {
             logger.error(moment().format(), "API.dtask_mgr error===>", name, input, e);
             return [];
         }
+    }
 
+    async freeNodes() {
+        return await API["dtask_mgr"].statNumber();
     }
 }
+
+export let dtaskMgr = new DtaskMgr();

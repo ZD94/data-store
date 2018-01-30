@@ -62,7 +62,7 @@ deploy:master:
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "14108"
     JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
-
+    JL_APP_PLACE: https://l.jingli365.com/proj/svr-place
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
@@ -84,6 +84,7 @@ deploy:release:
     JL_APP_POSTGRES: ""
     JL_APP_DTASKMGR_ADDR: dockerhost
     JL_APP_DTASKMGR_PORT: "4108"
+    JL_APP_PLACE: https://j.jingli365.com/proj/svr-place
 
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
