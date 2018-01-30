@@ -71,7 +71,7 @@ deploy:master:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14106:4106
+    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14106:4106
 
 deploy:swarm:
   stage: deploy
@@ -95,7 +95,30 @@ deploy:swarm:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14106:4106 -p 8080
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14106:4106 -p 8080
+
+deploy:test:
+  stage: deploy
+  only:
+    - /^test$/
+  environment:
+    name: test
+    url: https://t.jingli365.com/proj/svr-data-store
+  variables:
+    GIT_STRATEGY: none
+    JL_APP_PLACE_API: "https://t.jingli365.com/proj/svr-place"
+    JL_APP_DTASKMGR_ADDR: t.jingli365.com
+    JL_APP_DTASKMGR_PORT: "14108"
+    JL_APP_DTASKMGR_API: "http://t.jingli365.com:15000"
+    JL_APP_POSTGRES: "postgres://times:time0418@t.jingli365.com:15432/data-store"
+    JL_APP_REDIS: redis://t.jingli365.com:16379
+  script:
+    - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
+    - docker pull $DOCKER_CI_NAME
+    - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
+    - docker push $DOCKER_BRANCH_NAME
+    - echo deploy to https://l.jingli365.com
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14206:4106 -p 8080
 
 deploy:release:
   stage: deploy
@@ -118,4 +141,4 @@ deploy:release:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://j.jingli365.com
-    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:4106:4106 -p 8080
+    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 4106:4106 -p 8080
