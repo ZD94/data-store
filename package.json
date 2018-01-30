@@ -29,6 +29,7 @@
     "@jingli/dnode-api": "^2.0.2",
     "@jingli/logger": "^1.0.1",
     "@jingli/zone-setup": "^1.0.3",
+    "@types/node": "^8.5.9",
     "@types/redis": "^2.8.2",
     "@types/sequelize": "^4.0.79",
     "@types/uuid": "^3.4.3",
