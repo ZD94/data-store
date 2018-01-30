@@ -1,6 +1,10 @@
 {
   "appName": "${JL_APP_NAME}",
   "rootDir": "${JL_APP_DATA_DIR}",
+  "listen": "4106",
+  "httpPort": "${JL_APP_PORT}",
+  "placeAPI": "${JL_APP_PLACE_API}",
+  "dtaskMgr": "${JL_APP_DTASKMGR_API}",
   "postgres": {
     "url": "${JL_APP_POSTGRES}",
     "debug": true
@@ -11,8 +15,8 @@
   },
   "hosts": {
     "dtask": {
-      "addr": "l.jingli365.com",
-      "port": 14108
+      "addr": "${JL_APP_DTASKMGR_ADDR}",
+      "port": "${JL_APP_DTASKMGR_PORT}"
     }
   },
   "api": {
@@ -50,9 +54,5 @@
         }
       }
     }
-  },
-  "listen": "4106",
-  "socket_file": "${{rootDir}}/web.sock",
-  "placeAPI": "https://j.jingli365.com/proj/svr-place",
-  "dtaskMgr": "http://l.jingli365.com:15000"
+  }
 }
