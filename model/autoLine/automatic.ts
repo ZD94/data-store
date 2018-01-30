@@ -37,10 +37,15 @@ export class AutoMatic {
         let datas = await this.getLineDatas(num);
         let completeParams = datas.map(this.completeParams);
         let ps = completeParams.map(async (completeParam) => {
+            let result;
             try {
-                await getData.search_data(completeParam.params);
+                result = await getData.search_data(completeParam.params);
+                if (result.step != STEP.FINAL) {
+                    return;
+                }
             } catch (e) {
                 console.error(e);
+                return;
             }
             await DB.models["AutoLines"].update(
                 {
@@ -88,7 +93,7 @@ export class AutoMatic {
 
 let autoMatic = new AutoMatic();
 
-setTimeout(() => {
+/* setTimeout(() => {
     console.log("自动拉取线路任务启动");
     autoMatic.tasks();
-}, 5000);
+}, 5000); */

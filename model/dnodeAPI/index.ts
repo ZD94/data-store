@@ -12,6 +12,11 @@ var logger = new Logger("dtaskMgr");
 
 export class DtaskMgr {
     async runDtask(name, input) {
+        let timer = input.leaveDate || input.checkInDate;
+        if (moment(timer).format("x") <= moment().format("x")) {
+            return [];
+        }
+
         try {
             return await API["dtask_mgr"].runTask({ name, input });
         } catch (e) {
