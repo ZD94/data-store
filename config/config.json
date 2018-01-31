@@ -4,7 +4,6 @@
   "listen": "4106",
   "httpPort": "${JL_APP_PORT}",
   "placeAPI": "${JL_APP_PLACE_API}",
-  "dtaskMgr": "${JL_APP_DTASKMGR_API}",
   "postgres": {
     "url": "${JL_APP_POSTGRES}",
     "debug": true
