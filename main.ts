@@ -53,7 +53,8 @@ zone.forkStackTrace()
         }
         if (config.cluster && cluster.isMaster) {
             process.title = `${config.appName || pkg.name}-master`;
-            for (var i = 0; i < os.cpus().length; i++) {
+            let len = Number(config.cluster) || 2;
+            for (var i = 0; i < len; i++) {
                 cluster.fork();
             }
             cluster.on('exit', function (worker) {
