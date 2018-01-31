@@ -1,0 +1,90 @@
+/*
+ * @Author: Mr.He 
+ * @Date: 2017-12-17 11:48:17 
+ * @Last Modified by: Mr.He
+ * @Last Modified time: 2018-01-22 18:03:04
+ * @content what is the content of this file. */
+
+
+import { TrafficPrice } from "./traffic-price";
+import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, STEP } from "model/interface";
+import { flightModel, trainModel, testHotel } from "./modelData.newone";
+import _ = require("lodash");
+import moment = require("moment");
+
+
+export class FullPriceService extends TrafficPrice {
+    constructor() {
+        super();
+    }
+
+    async getFullPriceData(params: DataOrder) {
+        console.log(" getFullPriceData ")
+        let input;
+        if (params.type == BudgetType.HOTEL) {
+            input = params.input as ISearchHotelParams;
+            return await this.getHotelFullPrice(input);
+        } else {
+            input = params.input as ISearchTicketParams;
+            return await this.getTrafficFullPrice(input);
+        }
+    }
+
+    async getTrafficFullPrice(input: ISearchTicketParams, isNotOrigin?: Boolean): Promise<{ step: STEP, data: any[] }> {
+        let result = [];
+        let flightData = await this.getFlightFullPrice({
+            from: input.originPlace,
+            to: input.destination
+        });
+
+        for (let item of flightData) {
+            let data = _.clone(flightModel);
+            data.originPlace = input.originPlace;
+            data.destination = input.destination;
+            data.departDateTime = moment(input.leaveDate).format();
+            data.arrivalDateTime = moment(data.departDateTime).add(2, "hours").format();
+            if (isNotOrigin) {
+                item.price = item.price * 0.8;
+            }
+
+            data.agents[0].cabins = [{
+                name: item.degree,
+                price: item.price
+            }];
+            result.push(data);
+        }
+
+        let trainData = await this.getTrainFullPrice({
+            from: input.originPlace,
+            to: input.destination
+        });
+
+        for (let item of trainData) {
+            let data = _.clone(trainModel);
+            data.originPlace = input.originPlace;
+            data.destination = input.destination;
+            data.departDateTime = moment(input.leaveDate).format();
+            data.arrivalDateTime = moment(data.departDateTime).add(2, "hours").format();
+            data.agents[0].cabins = [{
+                name: item.degree,
+                price: item.price,
+                remainNumber: 100
+            }]
+            result.push(data);
+        }
+
+        return {
+            data: result,
+            step: STEP.FULL
+        }
+    }
+
+    async getHotelFullPrice(input: ISearchHotelParams, isNotOrigin?: Boolean) {
+        return {
+            data: testHotel,
+            step: STEP.FULL
+        }
+    }
+}
+
+export let fullPriceService = new FullPriceService();
