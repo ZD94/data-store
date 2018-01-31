@@ -60,7 +60,7 @@ deploy:master:
     JL_APP_PLACE_API: "https://l.jingli365.com/proj/svr-place"
     JL_APP_DTASKMGR_ADDR: l.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
-    JL_APP_DTASKMGR_API: "http://l.jingli365.com:15000"
+    JL_APP_DTASKMGR_API: "http://l.jingli365.com/proj/svr-dtask-mgr"
     JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
     JL_APP_REDIS: redis://l.jingli365.com:16379
   script:
@@ -83,7 +83,7 @@ deploy:test:
     JL_APP_PLACE_API: "https://t.jingli365.com/proj/svr-place"
     JL_APP_DTASKMGR_ADDR: t.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
-    JL_APP_DTASKMGR_API: "http://t.jingli365.com:15000"
+    JL_APP_DTASKMGR_API: "http://l.jingli365.com/proj/svr-dtask-mgr"
     JL_APP_POSTGRES: "postgres://times:time0418@t.jingli365.com:15432/data-store"
     JL_APP_REDIS: redis://t.jingli365.com:16379
   script:
@@ -107,6 +107,7 @@ deploy:release:
     JL_APP_PLACE_API: "https://j.jingli365.com/proj/svr-place"
     JL_APP_DTASKMGR_ADDR: j.jingli365.com
     JL_APP_DTASKMGR_PORT: "4108"
+    JL_APP_DTASKMGR_API: "http://j.jingli365.com/proj/svr-dtask-mgr"
     JL_APP_POSTGRES: ""
     JL_APP_REDIS: redis://j.jingli365.com:16379
   script:
