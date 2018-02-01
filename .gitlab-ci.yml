@@ -69,7 +69,7 @@ deploy:master:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14106:4106 -p 8080
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 14106:4106
 
 deploy:test:
   stage: deploy
@@ -91,7 +91,7 @@ deploy:test:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 14206:4106 -p 8080
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 14206:4106
 
 deploy:release:
   stage: deploy
@@ -114,4 +114,4 @@ deploy:release:
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://j.jingli365.com
-    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 4106:4106 -p 8080
+    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 4106:4106
