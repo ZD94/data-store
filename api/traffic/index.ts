@@ -2,31 +2,34 @@
  * Created by wlh on 2017/6/9.
  */
 
+import { SearchParams, TASK_NAME } from '../types';
+import { SelectDataHelp } from "../data-support";
+import { ITicket } from "@jingli/common-type";
+import config from "@jingli/config";
+import { DB } from '@jingli/database';
+import { ISearchTicketParams } from "model/interface";
+import { setInterval, clearInterval } from 'timers';
+import Logger from '@jingli/logger';
+import * as moment from "moment";
+import { DtaskMgr } from "model/dnodeAPI";
 
-'use strict';
-import API from '@jingli/dnode-api';
-import {SearchParams, TASK_NAME} from '../types';
-import {AbstractDataSupport, DataStorage} from "../data-support";
-import {ITicket} from "@jingli/common-type";
-import config = require("@jingli/config");
-import {DB} from '@jingli/database';
-import {RequestTypes} from "../data-support"
 
-export interface ISearchTicketParams extends SearchParams {
-    leaveDate: string;
-    originPlace: string;
-    destination: string;
-}
+let logger = new Logger("data-store");
 
-export class TicketStorage implements DataStorage<ITicket> {
+
+export class TicketStorage extends SelectDataHelp {
     constructor(private model) {
+        super();
     }
 
-    async setData(name: string, input: any, result) {
+    async setData(input: ISearchTicketParams, name: string, result) {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
-        input = <ISearchTicketParams>input;
+        if (!result.length) {
+            return;
+        }
+
         return this.model.create({
             channel: name,
             from: input.originPlace,
@@ -37,85 +40,68 @@ export class TicketStorage implements DataStorage<ITicket> {
         })
     }
 
-    async getData(name: string, input: any) :Promise<ITicket[]> {
+    async getData(input: ISearchTicketParams, name: string): Promise<{ data: ITicket[], created_at: string }> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
-        input = <ISearchTicketParams>input;
         let where = {
             channel: name,
             date: input.leaveDate,
-            from: input.originPlace,
-            to: input.destination,
-            created_at: {
-                '$gte': new Date(Date.now() - 10 * 60 * 1000)
+            from: {
+                in: await this.getSelectCitis(input.originPlace)
+            },
+            to: {
+                in: await this.getSelectCitis(input.destination)
+            },
+            data: {
+                ne: '[]'
             }
         }
-        let result = await this.model.findOne({where: where, order: [["created_at", "desc"]]});
-        if (result)
-            return result.data as ITicket[];
-        return [];
+        let result = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
+        if (result) {
+            return result;
+        }
+
+        /* 按照日期没有找到缓存数据，扩大搜索范围 */
+        delete where.date;
+        let resultLarger = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
+        if (!resultLarger) {
+            return null;
+        }
+        for (let item of resultLarger.data) {
+            /* 处理数据的日期、时间 */
+            item.departDateTime = item.departDateTime || input.leaveDate;
+            let targetDepartDate = moment(input.leaveDate);
+            let dataDepartTime = moment(item.departDateTime);
+            let days = targetDepartDate.diff(dataDepartTime, "days");
+            item.departDateTime = dataDepartTime.add(days, "days").format();
+            let targetArriveDate = moment(input.leaveDate);
+            let dataArriveTime = moment(item.departDateTime);
+            let days2 = targetArriveDate.diff(dataArriveTime, "days");
+            item.arrivalDateTime = dataArriveTime.add(days2, "days").format();
+        }
+
+        return resultLarger;
     }
 }
 
-export class TrafficSupport extends AbstractDataSupport<ITicket> {
+export let trafficStorage = new TicketStorage(DB.models['CacheTicket']);
 
-    constructor(storage: TicketStorage) {
-        super(storage);
+export class TrafficRealTimeData extends DtaskMgr {
+    constructor() {
+        super();
     }
-
-    async search_tickets(params: ISearchTicketParams) {
-        let self = this;
-        let flightTickets = await self.search_flight_tickets(params);
-        if (!flightTickets) {
-            flightTickets = [];
+    async getData(input: ISearchTicketParams, name: string) {
+        if (typeof input == 'string') {
+            input = JSON.parse(input);
         }
-        let trainTickets = await self.search_train_tickets(params);
-        if (!trainTickets) {
-            trainTickets = [];
+        let ret;
+        ret = await this.runDtask(name, input);
+        if (ret && ret.length) {
+            await trafficStorage.setData(input, name, ret);
         }
-        return [...trainTickets, ...flightTickets];
-    }
-
-    private async search_train_tickets(params: ISearchTicketParams) {
-        let {originPlace, destination, leaveDate} = params;
-        let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
-        let destinationObj = await API['place'].getCityInfo({cityCode: destination});
-
-        let result:  ITicket[] =[];
-
-        if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            result = await this.getData(TASK_NAME.TRAIN, params, RequestTypes.traffic);
-        }
-        //欧铁先注释掉了
-        //this.getData(TASK_NAME.TRAIN_EUR, params);
-        return result;
-    }
-
-    private async search_flight_tickets(params: ISearchTicketParams) {
-        let {originPlace, destination,leaveDate} = params;
-        let originPlaceObj = await API['place'].getCityInfo({cityCode: originPlace});
-        let destinationObj = await API['place'].getCityInfo({cityCode: destination});
-
-        let result:  ITicket[] =[];
-
-        if (!originPlaceObj.isAbroad && !destinationObj.isAbroad) {
-            if (params.isCacheData) {
-                result = await this.getData(TASK_NAME.FAST_FLIGHT, params, RequestTypes.traffic);
-            } else { 
-                result = await this.getData(TASK_NAME.FLIGHT, params, RequestTypes.traffic);
-            }
-        }
-        if (originPlaceObj.isAbroad || destinationObj.isAbroad) {
-            if (params.isCacheData) {
-                result = await this.getData(TASK_NAME.FAST_FLIGHT_ABROAD, params, RequestTypes.traffic);
-            } else { 
-                result = await this.getData(TASK_NAME.FLIGHT_ABROAD, params, RequestTypes.traffic);
-            }
-        }
-        return result;
+        return ret;
     }
 }
 
-var trafficSupport = new TrafficSupport(new TicketStorage(DB.models['CacheTicket']));
-export default trafficSupport;
+export let trafficRealTimeData = new TrafficRealTimeData();

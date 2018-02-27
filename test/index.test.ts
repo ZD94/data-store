@@ -18,7 +18,7 @@ Logger.init({
 });
 let logger = new Logger('test');
 
-import config = require('@jingli/config');
+import config from '@jingli/config';
 
 import * as database from '@jingli/database';
 database.init(config.postgres.url);
@@ -34,21 +34,21 @@ process.on('unhandledRejection', (reason: any, p: Promise<any>) => {
 
 let apipath = path.normalize(path.join(__dirname, '../api'));
 
-import {loadModel, sync} from '../db';
+import { loadModel, sync } from '../db';
 zone.forkStackTrace()
-    .run(async function(){
-        try{
+    .run(async function () {
+        try {
             await loadModel(path.join(__dirname, '../api'));
-            await sync({force: false});
+            await sync({ force: false });
             await API.initSql(apipath, config.api);
             await API.init(apipath, config.api);
             await API.loadTests();
             await API.startServices(18088);
             run();
         }
-        catch(e){
-            logger.error(e.stack?e.stack:e);
-            console.error(e.stack?e.stack:e);
+        catch (e) {
+            logger.error(e.stack ? e.stack : e);
+            console.error(e.stack ? e.stack : e);
             process.exit();
         }
     });

@@ -7,8 +7,7 @@ variables:
   JL_APP_DAEMON: "true"
   JL_APP_COMMAND: node main.js  >/data/log/nohup.out 2>&1
   JL_APP_NODE_ID: CI-$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG
-  JL_APP_REDIS: redis://l.jingli365.com:16379
-
+  JL_APP_PORT: "8080"
 stages:
   - build
   - docker
@@ -35,7 +34,6 @@ build:dist:
   script:
     - mkdir -p $NPM_CACHE_DIR/`npmhash`/node_modules && ln -s $NPM_CACHE_DIR/`npmhash`/node_modules .
     - echo `npmhash`
-    - git submodule update --init --checkout
     - npm install
     - npm run dist
 
@@ -56,39 +54,44 @@ deploy:master:
     - /^master$/
   environment:
     name: dev
-    url: https://l.jingli365.com
+    url: https://l.jingli365.com/proj/svr-data-store
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
-    JL_APP_DTASKMGR_ADDR: dockerhost
+    JL_APP_PLACE_API: "https://l.jingli365.com/proj/svr-place"
+    JL_APP_DTASKMGR_ADDR: l.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
+    JL_APP_DTASKMGR_API: "http://l.jingli365.com/proj/svr-dtask-mgr"
+    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
+    JL_APP_REDIS: redis://l.jingli365.com:16379
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://l.jingli365.com
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14106:4106
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 14106:4106
 
 deploy:test:
   stage: deploy
   only:
     - /^test$/
   environment:
-    name: dev
-    url: https://t.jingli365.com/proj/svr-data-store/
+    name: test
+    url: https://t.jingli365.com/proj/svr-data-store
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
-    JL_APP_DTASKMGR_ADDR: dockerhost
+    JL_APP_PLACE_API: "https://t.jingli365.com/proj/svr-place"
+    JL_APP_DTASKMGR_ADDR: l.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
+    JL_APP_POSTGRES: "postgres://times:time0418@t.jingli365.com:15432/data-store"
+    JL_APP_REDIS: redis://t.jingli365.com:16379
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
-    - echo deploy to https://t.jingli365.com/proj/svr-data-store/
-    - ssh test@l.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:14206:4106
+    - echo deploy to https://l.jingli365.com
+    - ssh test@l.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 14206:4106
 
 deploy:demo:
   stage: deploy
@@ -120,13 +123,15 @@ deploy:release:
     url: https://j.jingli365.com
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: ""
-    JL_APP_DTASKMGR_ADDR: dockerhost
+    JL_APP_PLACE_API: "https://j.jingli365.com/proj/svr-place"
+    JL_APP_DTASKMGR_ADDR: j.jingli365.com
     JL_APP_DTASKMGR_PORT: "4108"
+    JL_APP_POSTGRES: "postgres://jingli:J1n9L1.t3ch@j.jingli365.com:5432/data-store"
+    JL_APP_REDIS: redis://j.jingli365.com:16379
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
     - docker tag $DOCKER_CI_NAME $DOCKER_BRANCH_NAME
     - docker push $DOCKER_BRANCH_NAME
     - echo deploy to https://j.jingli365.com
-    - ssh test@j.jingli365.com /home/test/bin/docker_start.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 0.0.0.0:4106:4106
+    - ssh test@j.jingli365.com /home/test/bin/docker_swarm.sh $DOCKER_REG $DOCKER_NAME $CI_COMMIT_REF_SLUG -p 8080 -p 4106:4106
