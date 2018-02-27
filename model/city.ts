@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-08 15:41:16 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-23 16:57:07
+ * @Last Modified time: 2018-02-27 17:51:24
  * @content 提供地点信息获取服务. */
 
 
@@ -72,7 +72,7 @@ export class CityService {
         return city;
     }
 
-    static async getCityByName(name: string): Promise<ICity> {
+    static async getCityByName(name: string): Promise<ICity | null> {
         name = name.replace(/\市/ig, "");
         let city = <ICity>cache.get(name);
         if (city) {
@@ -80,13 +80,19 @@ export class CityService {
         }
 
         let uri = config.placeAPI + "/city/getCityByName";
-        let result = await Common.proxyHttp({
-            uri,
-            method: "get",
-            qs: {
-                name
-            }
-        });
+        let result;
+        try {
+            result = await Common.proxyHttp({
+                uri,
+                method: "get",
+                qs: {
+                    name
+                }
+            });
+        } catch (e) {
+            return null;
+        }
+
 
         if (result.code != 0) {
             console.error("place服务地点不存在 : " + uri + name);

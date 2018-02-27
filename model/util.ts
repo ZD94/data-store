@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-23 20:21:20
+ * @Last Modified time: 2018-02-27 17:34:37
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -111,9 +111,8 @@ export class Common {
             }
             return result;
         } catch (e) {
-            console.error("prxoyHttp error: ", params.uri, params.body, params.qs);
-            console.error(e);
-            return null;
+            console.error("prxoyHttp error: ", params);
+            throw new Error(e.message || e);
         }
     }
 }
