@@ -96,14 +96,14 @@ deploy:test:
 deploy:demo:
   stage: deploy
   only:
-    - /^master|test|release|demo$/
+    - /^demo$/
   environment:
     name: demo
     url: https://demo.jingli365.com/proj/svr-data-store/
   variables:
     GIT_STRATEGY: none
-    JL_APP_POSTGRES: "postgres://demo:d3m0jingli365@dockerhost/data-store"
-    JL_APP_DTASKMGR_ADDR: dockerhost
+    JL_APP_POSTGRES: "postgres://jingli:J1n9L1.t3ch@demo.jingli365.com:5432/data-store-demo"
+    JL_APP_DTASKMGR_ADDR: demo.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
