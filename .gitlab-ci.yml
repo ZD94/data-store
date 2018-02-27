@@ -102,9 +102,11 @@ deploy:demo:
     url: https://demo.jingli365.com/proj/svr-data-store/
   variables:
     GIT_STRATEGY: none
+    JL_APP_PLACE_API: "https://demo.jingli365.com/proj/svr-place"
     JL_APP_POSTGRES: "postgres://jingli:J1n9L1.t3ch@demo.jingli365.com:5432/data-store-demo"
     JL_APP_DTASKMGR_ADDR: demo.jingli365.com
     JL_APP_DTASKMGR_PORT: "14108"
+    JL_APP_REDIS: redis://demo.jingli365.com:6379
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
