@@ -26,7 +26,7 @@
     "@jingli/common-type": "^1.1.2",
     "@jingli/config": "^1.1.1",
     "@jingli/database": "1.0.2",
-    "@jingli/dnode-api": "^2.0.2",
+    "@jingli/dnode-api": "^2.0.3",
     "@jingli/logger": "^1.0.1",
     "@jingli/zone-setup": "^1.0.3",
     "@types/node": "^8.5.9",
