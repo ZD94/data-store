@@ -19,14 +19,14 @@
   "license": "ISC",
   "devDependencies": {
     "ts-node": "^3.3.0",
-    "typescript": "^2.6.2"
+    "typescript": "2.5.3"
   },
   "dependencies": {
     "@jingli/cache": "0.0.3",
     "@jingli/common-type": "^1.1.2",
     "@jingli/config": "^1.1.1",
     "@jingli/database": "1.0.2",
-    "@jingli/dnode-api": "^2.0.2",
+    "@jingli/dnode-api": "^2.0.3",
     "@jingli/logger": "^1.0.1",
     "@jingli/zone-setup": "^1.0.3",
     "@types/node": "^8.5.9",
