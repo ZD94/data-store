@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-03-06 21:19:42
+ * @Last Modified time: 2018-03-06 21:26:08
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -137,11 +137,13 @@ function matchChannel(target, origin, defaultArr) {
 }
 
 /**
- * 调用事例： import {proxyHttp} from "utils";
+ * 调用事例：
+ *          import Common from "model/util";
  *          import * as config from "@jingli/config";
- *          await proxyHttp({
+ *          await Common.proxyHttp({
  *             uri: config.aliWebTrackUrl,
  *             headers: {
+ *                  
  *             },
  *             qs: {
  *                  "APIVersion": 0.6.0,
@@ -149,5 +151,5 @@ function matchChannel(target, origin, defaultArr) {
  *                  "key1": "val1",
  *                  "key2": "val2",
  *             }
- *          })
+ *          });
  */
