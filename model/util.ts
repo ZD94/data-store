@@ -1,8 +1,8 @@
 /*
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
- * @Last Modified by: Mr.He
- * @Last Modified time: 2018-02-27 17:34:37
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-03-06 21:26:08
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -115,6 +115,25 @@ export class Common {
             throw new Error(e.message || e);
         }
     }
+    async setWebTrackEndPoint(params: any){
+        let qs = {
+            "APIVersion": '0.6.0',
+        };
+        for(let key in params){
+            qs[key] = params[key]
+        }
+        try{
+            await this.proxyHttp({
+                uri: config.aliWebTrackUrl,
+                qs
+            });
+        } catch(err) {
+            console.log(err) 
+            return;
+        }
+        return ;
+    }
+    
 }
 
 let common = new Common();
@@ -135,3 +154,4 @@ function matchChannel(target, origin, defaultArr) {
         return result;
     }
 }
+
