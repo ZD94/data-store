@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 22:10:53
+ * @Last Modified time: 2018-03-06 22:33:00
  * @content what is the content of this file. */
 
 import Common from "model/util";
@@ -84,7 +84,7 @@ export class AutoMatic {
 
         await Promise.all(ps);
         console.log("over once");
-        this.tasks();
+        // this.tasks();
     }
 
     completeParams(hotData) {

@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-27 19:03:50 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 22:19:30
+ * @Last Modified time: 2018-03-06 22:37:43
  * @content what is the content of this file. */
 
 import API from "@jingli/dnode-api";
@@ -47,14 +47,17 @@ export class DtaskMgr {
                 "dataLength": 0,
                 "errors": JSON.stringify(e),
                 "operationStatus": EOperationStatus.FAIL
-            })
-            logger.error(moment().format(), "API.dtask_mgr error===>", name, input, e);
+            });
+            logger.error(moment().format(), "API.dtask_mgr error===>", name, input, e.message || e);
             return [];
         }
     }
 
     async freeNodes() {
         return await API["dtask_mgr"].statNumber();
+        // return {
+        //     freeNodes: 10
+        // }
     }
 }
 
