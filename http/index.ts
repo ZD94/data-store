@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-28 14:55:11
+ * @Last Modified time: 2018-03-06 21:51:43
  * @content what is the content of this file. */
 
 
@@ -15,7 +15,7 @@ let conn_timeout = require("connect-timeout");
 let bodyParser = require("body-parser");
 let moment = require("moment");
 import getData from "api/getData";
-import autoLine from "model/autoLine";
+import autoLine from "model/autoLine/addline";
 
 let app = express();
 app.use(conn_timeout("300s"));
