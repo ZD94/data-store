@@ -36,6 +36,7 @@ import cluster = require("cluster");
 import os = require("os");
 import { loadModel, sync } from "./db";
 import "modelSql/index";
+import "./model/autoLine";
 
 const pkg = require("./package.json");
 

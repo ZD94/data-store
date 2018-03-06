@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 21:49:41
+ * @Last Modified time: 2018-03-06 22:10:53
  * @content what is the content of this file. */
 
 import Common from "model/util";
@@ -13,11 +13,16 @@ import { DataOrder, BudgetType, STEP } from 'model/interface';
 import { dtaskMgr } from "model/dnodeAPI";
 import * as moment from 'moment';
 import { initLines } from "./init";
+import * as cluster from "cluster";
 
 export class AutoMatic {
     constructor() {
 
         let self = this;
+        console.log(111222, cluster.isMaster);
+        if (!cluster.isMaster) {
+            return;
+        }
         if (config.lineTest.isNeedInit && config.lineTest.open) {
             initLines().then((result) => {
                 console.log("ok ok ok ok", result);
@@ -26,7 +31,7 @@ export class AutoMatic {
         }
 
         setTimeout(async () => {
-            if (config.lineTest.open && !config.lineTest.isNeedInit) {
+            if (!config.lineTest.isNeedInit && config.lineTest.open) {
                 self.tasks();
             }
         }, 5000);
