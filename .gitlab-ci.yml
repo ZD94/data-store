@@ -64,7 +64,7 @@ deploy:master:
     JL_APP_POSTGRES: "postgres://times:time0418@l.jingli365.com:15432/data-store"
     JL_APP_REDIS: redis://l.jingli365.com:16379
     JL_APP_ALI_WEBTRACK_URL: http://jl-data-stat.cn-beijing.log.aliyuncs.com/logstores/jl-data-stat/track
-    SERVER_TYPE: develpment-server
+    JL_APP_SERVER_TYPE: develpment-server
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
@@ -88,7 +88,7 @@ deploy:test:
     JL_APP_POSTGRES: "postgres://times:time0418@t.jingli365.com:15432/data-store"
     JL_APP_REDIS: redis://t.jingli365.com:16379
     JL_APP_ALI_WEBTRACK_URL: http://jl-data-stat.cn-beijing.log.aliyuncs.com/logstores/jl-data-stat/track
-    SERVER_TYPE: test-server
+    JL_APP_SERVER_TYPE: test-server
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME
@@ -112,7 +112,7 @@ deploy:demo:
     JL_APP_DTASKMGR_PORT: "14108"
     JL_APP_REDIS: redis://demo.jingli365.com:6379
     JL_APP_ALI_WEBTRACK_URL: http://jl-data-stat.cn-beijing.log.aliyuncs.com/logstores/jl-data-stat/track
-    SERVER_TYPE: release-server
+    JL_APP_SERVER_TYPE: release-server
   script:
     - docker login -u dockeruser -p $DOCKER_PASSWD $DOCKER_REG
     - docker pull $DOCKER_CI_NAME

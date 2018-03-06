@@ -85,6 +85,6 @@
       }
     }
   },
-  "aliWebTrackUrl": "${ALI_WEBTRACK_URL}",
-  "serverType": "${SERVER_TYPE}"
+  "aliWebTrackUrl": "${JL_APP_ALI_WEBTRACK_URL}",
+  "serverType": "${JL_APP_SERVER_TYPE}"
 }
