@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 22:33:00
+ * @Last Modified time: 2018-03-06 23:13:44
  * @content what is the content of this file. */
 
 import Common from "model/util";
@@ -19,10 +19,10 @@ export class AutoMatic {
     constructor() {
 
         let self = this;
-        console.log(111222, cluster.isMaster);
-        if (!cluster.isMaster) {
-            return;
-        }
+        // console.log(111222, cluster.isMaster);
+        // if (!cluster.isMaster) {
+        //     return;
+        // }
         if (config.lineTest.isNeedInit && config.lineTest.open) {
             initLines().then((result) => {
                 console.log("ok ok ok ok", result);
@@ -41,7 +41,7 @@ export class AutoMatic {
         let result;
         try {
             result = await dtaskMgr.freeNodes();
-            return Math.floor(result.freeNodes * 0.5);
+            return Math.floor(result.freeNodes * 0.2);
         } catch (e) {
             console.error(e);
             return 0;
@@ -84,7 +84,7 @@ export class AutoMatic {
 
         await Promise.all(ps);
         console.log("over once");
-        // this.tasks();
+        this.tasks();
     }
 
     completeParams(hotData) {
