@@ -12,12 +12,20 @@ import { SelectDataHelp } from "api/data-support";
 import Logger from '@jingli/logger';
 import { DtaskMgr } from "model/dnodeAPI";
 
+import Common from "model/util";
+import * as config from "@jingli/config";
+
 var logger = new Logger("data-store");
 
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
 
-
+export enum EOperationStatus  {
+    BEFORE_PROCESS = 'BEFORE_PROCESS',
+    PROCESSING = 'PROCESSING',
+    SUCCESS = 'SUCCESS',
+    FAIL = 'FAIL'
+}
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
     [idx: number]: T;
 }
@@ -104,8 +112,7 @@ export class HotelRealTimeData extends DtaskMgr {
         ret = await this.runDtask(name, input);
         if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
-        }
-
+        }  
         return ret;
     }
 }
