@@ -1,8 +1,8 @@
 /*
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
- * @Last Modified by: Mr.He
- * @Last Modified time: 2018-02-27 17:34:37
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-03-06 21:19:42
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -135,3 +135,19 @@ function matchChannel(target, origin, defaultArr) {
         return result;
     }
 }
+
+/**
+ * 调用事例： import {proxyHttp} from "utils";
+ *          import * as config from "@jingli/config";
+ *          await proxyHttp({
+ *             uri: config.aliWebTrackUrl,
+ *             headers: {
+ *             },
+ *             qs: {
+ *                  "APIVersion": 0.6.0,
+ *                  "__topic__": "test",
+ *                  "key1": "val1",
+ *                  "key2": "val2",
+ *             }
+ *          })
+ */
