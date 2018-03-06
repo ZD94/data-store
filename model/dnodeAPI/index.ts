@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-27 19:03:50 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 21:44:11
+ * @Last Modified time: 2018-03-06 22:15:38
  * @content what is the content of this file. */
 
 import API from "@jingli/dnode-api";
@@ -18,6 +18,7 @@ export class DtaskMgr {
         }
 
         try {
+            console.log("runDtask===>", name, input);
             return await API["dtask_mgr"].runTask({ name, input });
         } catch (e) {
             logger.error(moment().format(), "API.dtask_mgr error===>", name, input, e);
