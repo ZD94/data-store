@@ -115,6 +115,25 @@ export class Common {
             throw new Error(e.message || e);
         }
     }
+    async setWebTrackEndPoint(params: any){
+        let qs = {
+            "APIVersion": '0.6.0',
+        };
+        for(let key in params){
+            qs[key] = params[key]
+        }
+        try{
+            await this.proxyHttp({
+                uri: config.aliWebTrackUrl,
+                qs
+            });
+        } catch(err) {
+            console.log(err) 
+            return;
+        }
+        return ;
+    }
+    
 }
 
 let common = new Common();
@@ -136,20 +155,3 @@ function matchChannel(target, origin, defaultArr) {
     }
 }
 
-/**
- * 调用事例：
- *          import Common from "model/util";
- *          import * as config from "@jingli/config";
- *          await Common.proxyHttp({
- *             uri: config.aliWebTrackUrl,
- *             headers: {
- *                  
- *             },
- *             qs: {
- *                  "APIVersion": 0.6.0,
- *                  "__topic__": "test",
- *                  "key1": "val1",
- *                  "key2": "val2",
- *             }
- *          });
- */
