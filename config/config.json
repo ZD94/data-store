@@ -14,8 +14,8 @@
   },
   "hosts": {
     "dtask": {
-      "addr": "${JL_APP_DTASKMGR_ADDR}",
-      "port": "${JL_APP_DTASKMGR_PORT}"
+      "addr": "192.168.1.2",
+      "port": "14108"
     }
   },
   "api": {
