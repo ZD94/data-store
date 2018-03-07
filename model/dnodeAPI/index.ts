@@ -40,7 +40,7 @@ export class DtaskMgr {
                 "expectDataType": STEP.FINAL,
                 "returnDataType": STEP.FINAL,            
                 "dataLength": data ? data.length : 0,
-                "operationStatus": data && data.length ? EOperationStatus.SUCCESS : EOperationStatus.EMPTY,
+                "operationStatus": data && data.length ? EOperationStatus.CRAWL_SUCCESS : EOperationStatus.EMPTY,
                 "duration": Date.now() - timing,
                 "hit": false
             })
@@ -57,7 +57,7 @@ export class DtaskMgr {
                 "returnDataType": STEP.FINAL, 
                 "dataLength": 0,
                 "errors": JSON.stringify(e),
-                "operationStatus": EOperationStatus.FAIL,
+                "operationStatus": EOperationStatus.CRAWL_FAIL,
                 "duration": Date.now() - timing,
                 "hit": false
             });
