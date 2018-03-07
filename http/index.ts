@@ -16,7 +16,7 @@ let bodyParser = require("body-parser");
 let moment = require("moment");
 import getData from "api/getData";
 import autoLine from "model/autoLine/addline";
-import { Common } from 'model/util';
+import Common  from 'model/util';
 import * as config from "@jingli/config";
 import { EOperationStatus } from 'api/hotels';
 export const WebTrackUrlLimit = 160000;  //阿里云限制url的长度为16k

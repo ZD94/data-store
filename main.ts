@@ -21,7 +21,7 @@ import cache from "@jingli/cache";
 cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
 
 import * as zone from '@jingli/zone-setup';
-import {Common} from "model/util";
+import Common from "model/util";
 
 import { WebTrackUrlLimit } from "http/index"
 
