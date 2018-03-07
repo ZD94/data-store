@@ -32,7 +32,7 @@ let getData = {
                     "expectDataType": STEP.CACHE,
                     "returnDataType": result.step,
                     "dataLength": result.data.length,
-                    "operationStatus": result.data && result.data.length? EOperationStatus.SUCCESS: EOperationStatus.EMPTY,
+                    "operationStatus": result.data && result.data.length? EOperationStatus.CACHE: EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
                     "hit": result.step != STEP.FULL && result.data && result.data.length? true: false
                 });

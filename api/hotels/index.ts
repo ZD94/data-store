@@ -23,12 +23,14 @@ const CACHE_DURATION = 2 * 60 * 60 * 1000;
 export enum EOperationStatus  {
     BEFORE_PROCESS = 'BEFORE_PROCESS',
     PROCESSING = 'PROCESSING',
-    SUCCESS = 'CRAWL-SUCCESS',
-    FAIL = 'CRAWL-FAIL',
+    CRAWL_SUCCESS = 'CRAWL-SUCCESS',
+    CRAWL_FAIL = 'CRAWL-FAIL',
     CACHE = 'CACHE-SUCCESS',
     FULL = 'FULL-SUCCESS',
     FINAL = 'FINAL-SUCCESS',
-    EMPTY = 'EMPTY'
+    EMPTY = 'EMPTY',
+    REQUEST_SUCCESS = 'REQUEST-SUCCESS'
+
 }
 export interface Data<T extends (ITicket | IHotel)> extends Array<T> {
     [idx: number]: T;
