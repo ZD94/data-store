@@ -32,7 +32,7 @@ process.on('unhandledRejection', async (reason: any, p: PromiseLike<any>) => {
         "__topic__": config.serverType,
         "project": "data-store",
         "eventName": "SystemHealth-UnHandledRejection",
-        "searchCondition": reason
+        "errors": reason
     });
     if (config.debug) {
         throw reason;

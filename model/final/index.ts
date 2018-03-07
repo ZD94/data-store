@@ -6,13 +6,13 @@
  * @content what is the content of this file. */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
-import { hotelStorage, hotelRealTimeData } from "../../api/hotels";
+import { hotelStorage, hotelRealTimeData, EOperationStatus } from "../../api/hotels";
 import { trafficStorage, trafficRealTimeData } from "../../api/traffic";
 import md5 = require("md5");
 import RealData from "./getRealData";
 import cacheData from "model/cache";
 import common from 'model/util';
-
+import * as config from "@jingli/config";
 export class FinalData extends RealData {
     promiseIds: any;
     constructor() {
@@ -21,6 +21,7 @@ export class FinalData extends RealData {
     }
 
     async getFinalData(params: DataOrder) {
+        let timing = Date.now();
         let ps: Promise<{ data: any[], step: STEP }>[] = params.channels.map(async (name) => {
             let promiseId = this.getPromiseId(params, name);
             let hasPromise = this.findThePromise(promiseId);           //可能会修改获取promise逻辑
@@ -30,6 +31,19 @@ export class FinalData extends RealData {
                  */
                 //有promiseId，等待结束
                 let data = await this.promiseIds[promiseId];
+                
+                await common.setWebTrackEndPoint({
+                    "__topic__": config.serverType,
+                    "project": "data-store",
+                    "eventName": "HttpRequest-FinalDataRequest",
+                    "searchCondition": JSON.stringify(params),
+                    "expectDataType": STEP.FINAL,
+                    "returnDataType": STEP.FINAL,
+                    "dataLength": data.length,
+                    "operationStatus": data && data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "duration": Date.now() - timing,
+                    "hit": true
+                });
                 return {
                     step: STEP.FINAL,
                     data
@@ -131,6 +145,7 @@ export class FinalData extends RealData {
 
     /* 没有找到promiseId，数据库中查找 */
     async notFindPromiseId(params: DataOrder, name: string) {
+        let timing = Date.now();
         if (params.type == BudgetType.TRAFFICT) {
             let input = params.input as ISearchTicketParams;
             let result = await cacheData.trafficCache(input, name, true);
@@ -139,6 +154,18 @@ export class FinalData extends RealData {
                 return await FinalData.getTrafficRealTimeData(input, name);
             } else {
                 //ok
+                await common.setWebTrackEndPoint({
+                    "__topic__": config.serverType,
+                    "project": "data-store",
+                    "eventName": "HttpRequest-FinalDataRequest",
+                    "searchCondition": JSON.stringify(params),
+                    "expectDataType": STEP.FINAL,
+                    "returnDataType": result.step,
+                    "dataLength": result.data.length,
+                    "operationStatus": result.data && result.data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "duration": Date.now() - timing,
+                    "hit": result.data && result.data.length? true: false
+                });
                 return result.data;
             }
         } else {
@@ -149,6 +176,18 @@ export class FinalData extends RealData {
                 return await FinalData.getHotelRealTimeData(input, name);
             } else {
                 //ok
+                await common.setWebTrackEndPoint({
+                    "__topic__": config.serverType,
+                    "project": "data-store",
+                    "eventName": "HttpRequest-FinalDataRequest",
+                    "searchCondition": JSON.stringify(params),
+                    "expectDataType": STEP.FINAL,
+                    "returnDataType": result.step,
+                    "dataLength": result.data.length,
+                    "operationStatus": result.data && result.data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "duration": Date.now() - timing,
+                    "hit": result.step != STEP.FINAL && result.data && result.data.length? true: false
+                });
                 return result.data;
             }
         }
