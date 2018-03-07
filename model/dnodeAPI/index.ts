@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-27 19:03:50 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 23:14:01
+ * @Last Modified time: 2018-03-07 15:20:38
  * @content what is the content of this file. */
 
 import API from "@jingli/dnode-api";
@@ -45,7 +45,7 @@ export class DtaskMgr {
                 "eventName": name,
                 "searchCondition": JSON.stringify(input),
                 "dataLength": 0,
-                "errors": JSON.stringify(e),
+                "errors": JSON.stringify(e.message || e),
                 "operationStatus": EOperationStatus.FAIL
             });
             logger.error(moment().format(), "API.dtask_mgr error===>", name, input, e.message || e);
