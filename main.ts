@@ -21,8 +21,19 @@ import cache from "@jingli/cache";
 cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
 
 import * as zone from '@jingli/zone-setup';
+import {Common} from "model/util";
 
-process.on('unhandledRejection', (reason: any, p: PromiseLike<any>) => {
+import { WebTrackUrlLimit } from "http/index"
+
+process.on('unhandledRejection', async (reason: any, p: PromiseLike<any>) => {
+    let errors = reason? JSON.stringify(reason): '';
+    reason = reason.substring(0, WebTrackUrlLimit - 6000);
+    await Common.setWebTrackEndPoint({
+        "__topic__": config.serverType,
+        "project": "data-store",
+        "eventName": "SystemHealth-UnHandledRejection",
+        "searchCondition": reason
+    });
     if (config.debug) {
         throw reason;
     }
