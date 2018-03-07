@@ -21,24 +21,6 @@ import cache from "@jingli/cache";
 cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
 
 import * as zone from '@jingli/zone-setup';
-import Common from "model/util";
-
-import { WebTrackUrlLimit } from "http/index"
-
-process.on('unhandledRejection', async (reason: any, p: PromiseLike<any>) => {
-    let errors = reason? JSON.stringify(reason): '';
-    reason = reason.substring(0, WebTrackUrlLimit - 6000);
-    // await Common.setWebTrackEndPoint({
-    //     "__topic__": config.serverType,
-    //     "project": "data-store",
-    //     "eventName": "SystemHealth-UnHandledRejection",
-    //     "errors": reason
-    // });
-    if (config.debug) {
-        throw reason;
-    }
-    logger.error(reason);
-});
 
 import database = require("@jingli/database");
 database.init(config.postgres.url);
@@ -53,6 +35,9 @@ const pkg = require("./package.json");
 
 import app from "./http";
 const http = require("http");
+import Common from "model/util";
+import { WebTrackUrlLimit } from "http/index"
+
 
 zone.forkStackTrace()
     .run(async function () {
@@ -60,6 +45,8 @@ zone.forkStackTrace()
         if (cluster.isMaster) {
             console.log("PORT  === >  ", PORT);
             await sync({ force: false });
+
+            console.log("ok ok ok");
             await API.initSql(path.join(__dirname, 'api'), config.api);
             let result = await checkListeningPort(PORT);
         }
@@ -79,6 +66,17 @@ zone.forkStackTrace()
             process.title = `${config.appName || pkg.name}-worker`;
         }
         process.on('unhandledRejection', function (reason, p) {
+            let errors = reason ? JSON.stringify(reason) : '';
+            reason = reason.substring(0, WebTrackUrlLimit - 6000);
+            // await Common.setWebTrackEndPoint({
+            //     "__topic__": config.serverType,
+            //     "project": "data-store",
+            //     "eventName": "SystemHealth-UnHandledRejection",
+            //     "errors": reason
+            // });
+            if (config.debug) {
+                throw reason;
+            }
             logger.error('unhandledRejection==>', reason)
             throw reason;
         })
