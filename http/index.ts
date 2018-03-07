@@ -33,17 +33,17 @@ app.post("/searchData", async (req: any, res: any, next: any) => {
     let expectStep = params.step;
     let timing = Date.now();
     let result = await getData.search_data(params);
-    await Common.setWebTrackEndPoint({
-        "__topic__": config.serverType,
-        "project": "data-store",
-        "eventName": "HttpRequest-SearchDataRequest",
-        "searchCondition": JSON.stringify(params),
-        "expectDataType": expectStep,
-        "returnDataType": result.step,
-        "dataLength": result.data.length,
-        "operationStatus": result.data && result.data.length? EOperationStatus.SUCCESS: EOperationStatus.EMPTY,
-        "duration": Date.now() - timing
-    });
+    // await Common.setWebTrackEndPoint({
+    //     "__topic__": config.serverType,
+    //     "project": "data-store",
+    //     "eventName": "HttpRequest-SearchDataRequest",
+    //     "searchCondition": JSON.stringify(params),
+    //     "expectDataType": expectStep,
+    //     "returnDataType": result.step,
+    //     "dataLength": result.data.length,
+    //     "operationStatus": result.data && result.data.length? EOperationStatus.SUCCESS: EOperationStatus.EMPTY,
+    //     "duration": Date.now() - timing
+    // });
     logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), `expectStep: ${expectStep}, get Step: ${result.step}, length: ${result.data.length}`);
     res.json(result);
 });
