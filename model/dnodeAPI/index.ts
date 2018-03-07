@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-27 19:03:50 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-07 15:20:38
+ * @Last Modified time: 2018-03-07 15:29:07
  * @content what is the content of this file. */
 
 import API from "@jingli/dnode-api";
@@ -36,7 +36,9 @@ export class DtaskMgr {
                 "searchCondition": JSON.stringify(input),
                 "dataLength": data ? data.length : 0,
                 "operationStatus": data && data.length ? EOperationStatus.SUCCESS : EOperationStatus.FAIL
-            })
+            });
+
+            console.log("running the task : ", data.length);
             return data;
         } catch (e) {
             await Common.setWebTrackEndPoint({
