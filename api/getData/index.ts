@@ -7,19 +7,36 @@
 
 import cache from "@jingli/cache";
 import { STEP, BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
-import common from 'model/util';
+import common  from 'model/util';
 import { fullPriceService } from "model/fullPrice";
 import cacheData from "model/cache";
 import finalData from "model/final";
+import * as config from "@jingli/config";
+import { EOperationStatus } from 'api/hotels';
 
 let getData = {
     async search_data(params: DataOrder) {
+        let timing = Date.now();
+        let result: DataOrder;
         params = await common.checkParams(params);
         switch (params.step) {
             case STEP.FULL:
                 return await fullPriceService.getFullPriceData(params);
             case STEP.CACHE:
-                return await cacheData.getCacheData(params);
+                result = await cacheData.getCacheData(params);
+                await common.setWebTrackEndPoint({
+                    "__topic__": config.serverType,
+                    "project": "data-store",
+                    "eventName": "HttpRequest-CacheDataRequest",
+                    "searchCondition": JSON.stringify(params),
+                    "expectDataType": STEP.CACHE,
+                    "returnDataType": result.step,
+                    "dataLength": result.data.length,
+                    "operationStatus": result.data && result.data.length? EOperationStatus.CACHE: EOperationStatus.EMPTY,
+                    "duration": Date.now() - timing,
+                    "hit": result.step != STEP.FULL && result.data && result.data.length? true: false
+                });
+                return result;
             case STEP.FINAL:
                 return await finalData.getFinalData(params);
             default:
