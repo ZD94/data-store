@@ -28,12 +28,12 @@ import { WebTrackUrlLimit } from "http/index"
 process.on('unhandledRejection', async (reason: any, p: PromiseLike<any>) => {
     let errors = reason? JSON.stringify(reason): '';
     reason = reason.substring(0, WebTrackUrlLimit - 6000);
-    await Common.setWebTrackEndPoint({
-        "__topic__": config.serverType,
-        "project": "data-store",
-        "eventName": "SystemHealth-UnHandledRejection",
-        "errors": reason
-    });
+    // await Common.setWebTrackEndPoint({
+    //     "__topic__": config.serverType,
+    //     "project": "data-store",
+    //     "eventName": "SystemHealth-UnHandledRejection",
+    //     "errors": reason
+    // });
     if (config.debug) {
         throw reason;
     }
