@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-24 16:49:08 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-28 14:10:38
+ * @Last Modified time: 2018-03-07 20:30:30
  * @content what is the content of this file. */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -31,16 +31,16 @@ export class FinalData extends RealData {
                  */
                 //有promiseId，等待结束
                 let data = await this.promiseIds[promiseId];
-                
+
                 await common.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
-                    "searchCondition": JSON.stringify(params),
+                    "searchCondition": JSON.stringify(params.input),
                     "expectDataType": STEP.FINAL,
                     "returnDataType": STEP.FINAL,
                     "dataLength": data.length,
-                    "operationStatus": data && data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "operationStatus": data && data.length ? EOperationStatus.FINAL : EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
                     "hit": true
                 });
@@ -158,13 +158,13 @@ export class FinalData extends RealData {
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
-                    "searchCondition": JSON.stringify(params),
+                    "searchCondition": JSON.stringify(params.input),
                     "expectDataType": STEP.FINAL,
                     "returnDataType": result.step,
                     "dataLength": result.data.length,
-                    "operationStatus": result.data && result.data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "operationStatus": result.data && result.data.length ? EOperationStatus.FINAL : EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
-                    "hit": result.data && result.data.length? true: false
+                    "hit": result.data && result.data.length ? true : false
                 });
                 return result.data;
             }
@@ -180,13 +180,13 @@ export class FinalData extends RealData {
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
-                    "searchCondition": JSON.stringify(params),
+                    "searchCondition": JSON.stringify(params.input),
                     "expectDataType": STEP.FINAL,
                     "returnDataType": result.step,
                     "dataLength": result.data.length,
-                    "operationStatus": result.data && result.data.length? EOperationStatus.FINAL: EOperationStatus.EMPTY,
+                    "operationStatus": result.data && result.data.length ? EOperationStatus.FINAL : EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
-                    "hit": result.step != STEP.FINAL && result.data && result.data.length? true: false
+                    "hit": result.step != STEP.FINAL && result.data && result.data.length ? true : false
                 });
                 return result.data;
             }
