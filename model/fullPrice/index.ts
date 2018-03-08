@@ -11,6 +11,7 @@ import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, STEP } 
 import { flightModel, trainModel, testHotel } from "./modelData.newone";
 import _ = require("lodash");
 import moment = require("moment");
+import { getCityInfo, CityInterface, CityWithDistanceInterface, nearby } from '@jingli/city';
 
 
 export class FullPriceService extends TrafficPrice {
@@ -25,8 +26,27 @@ export class FullPriceService extends TrafficPrice {
             return await this.getHotelFullPrice(input);
         } else {
             input = params.input as ISearchTicketParams;
+            let originPlace = await getCityInfo(input.originPlace);
+            if (!originPlace.isCity) {
+                originPlace = (await this.nearbyCity(originPlace, 100)) || originPlace;
+            }
+            let destination = await getCityInfo(input.destination);
+            if (!destination.isCity) {
+                destination = (await this.nearbyCity(destination, 100) || destination);
+            }
+            input.originPlace = originPlace.id;
+            input.destination = destination.id;
             return await this.getTrafficFullPrice(input);
         }
+    } model/cache/index.ts
+
+    async nearbyCity(place: CityInterface, distance: number): Promise<CityWithDistanceInterface> {
+        let cities = await nearby({ latitude: place.latitude, longitude: place.longitude }, distance, true);
+        if (cities && cities.length) {
+            place = cities[0];
+            return place as CityWithDistanceInterface;
+        }
+        return null;
     }
 
     async getTrafficFullPrice(input: ISearchTicketParams, isNotOrigin?: Boolean): Promise<{ step: STEP, data: any[] }> {
