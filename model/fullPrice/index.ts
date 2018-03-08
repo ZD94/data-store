@@ -38,7 +38,7 @@ export class FullPriceService extends TrafficPrice {
             input.destination = destination.id;
             return await this.getTrafficFullPrice(input);
         }
-    } model/cache/index.ts
+    }
 
     async nearbyCity(place: CityInterface, distance: number): Promise<CityWithDistanceInterface> {
         let cities = await nearby({ latitude: place.latitude, longitude: place.longitude }, distance, true);
