@@ -12,7 +12,7 @@ import API from "@jingli/dnode-api";
 import common from 'model/util';
 import moment = require("moment");
 import { fullPriceService } from "model/fullPrice";
-
+import { getCityInfo, CityInterface, CityWithDistanceInterface, nearby} from '@jingli/city';
 
 
 export class CacheData {
@@ -25,6 +25,16 @@ export class CacheData {
             });
         } else {
             let input = params.input as ISearchTicketParams;
+            let originPlace = await getCityInfo(input.originPlace);
+            if (!originPlace.isCity) {
+                originPlace = (await this.nearbyCity(originPlace, 100)) || originPlace;
+            }
+            let destination = await getCityInfo(input.destination);
+            if (!destination.isCity) {
+                destination = (await this.nearbyCity(destination, 100) || destination);
+            }
+            input.originPlace = originPlace.id;
+            input.destination = destination.id;
             ps = params.channels.map(async (name) => {
                 return await this.trafficCache(input, name);
             });
@@ -59,6 +69,15 @@ export class CacheData {
 
         params.step = FIN ? STEP.FINAL : STEP.CACHE;
         return params;
+    }
+
+    async nearbyCity(place: CityInterface, distance: number): Promise<CityWithDistanceInterface> {
+        let cities = await nearby({ latitude: place.latitude, longitude: place.longitude }, distance, true);
+        if (cities && cities.length) {
+            place = cities[0];
+            return place as CityWithDistanceInterface;
+        }
+        return null;
     }
 
     /* @params isOrigin 是否只是查看数据库中数据 */
