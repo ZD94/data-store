@@ -16,14 +16,12 @@ let getData = {
     async search_data(params: DataOrder) {
         params = await common.checkParams(params);
         switch (params.step) {
-            case STEP.FULL:
-                return await fullPriceService.getFullPriceData(params);
             case STEP.CACHE:
                 return await cacheData.getCacheData(params);
             case STEP.FINAL:
                 return await finalData.getFinalData(params);
             default:
-                throw new Error("not has the Step : " + params.step);
+                return await fullPriceService.getFullPriceData(params);
         }
     }
 };

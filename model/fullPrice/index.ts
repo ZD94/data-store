@@ -19,7 +19,6 @@ export class FullPriceService extends TrafficPrice {
     }
 
     async getFullPriceData(params: DataOrder) {
-        console.log(" getFullPriceData ")
         let input;
         if (params.type == BudgetType.HOTEL) {
             input = params.input as ISearchHotelParams;

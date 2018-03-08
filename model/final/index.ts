@@ -12,6 +12,7 @@ import md5 = require("md5");
 import RealData from "./getRealData";
 import cacheData from "model/cache";
 import common from 'model/util';
+import { getCityInfo, nearby, CityWithDistanceInterface, CityInterface } from '@jingli/city';
 
 export class FinalData extends RealData {
     promiseIds: any;
@@ -113,6 +114,18 @@ export class FinalData extends RealData {
                 try {
                     let result;
                     if (params.type == BudgetType.TRAFFICT) {
+                        let options = <ISearchTicketParams>params.input;
+                        let originPlace = await getCityInfo(options.originPlace);
+                        if (!originPlace.isCity) { 
+                            originPlace = (await _self.nearbyCity(originPlace, 100)) || originPlace;
+                        }
+                        let destination = await getCityInfo(options.destination);
+                        if (!destination.isCity) { 
+                            destination = (await _self.nearbyCity(destination, 100) || destination);
+                        }
+                        options.originPlace = originPlace.id;
+                        options.destination = destination.id;
+                        params.input = options;
                         result = await FinalData.getTrafficRealTimeData(params.input as ISearchTicketParams, name);
                     } else {
                         result = await FinalData.getHotelRealTimeData(params.input as ISearchHotelParams, name);
@@ -127,6 +140,15 @@ export class FinalData extends RealData {
                 }
             })
         })();
+    }
+
+    private async nearbyCity(place: CityInterface, distance: number) :Promise<CityWithDistanceInterface>{ 
+        let cities = await nearby({ latitude: place.latitude, longitude: place.longitude }, distance, true);
+        if (cities && cities.length) {
+            place = cities[0];
+            return place as CityWithDistanceInterface;
+        }
+        return null;
     }
 
     /* 没有找到promiseId，数据库中查找 */
