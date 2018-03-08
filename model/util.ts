@@ -2,14 +2,14 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-02-27 17:34:37
+ * @Last Modified time: 2018-03-06 22:37:10
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
 import { TASK_NAME } from '../api/types';
 let _ = require("lodash");
 import { CityService } from "model/city";
-import config = require("@jingli/config");
+import config from "@jingli/config";
 import * as request from "request-promise";
 
 
@@ -115,6 +115,26 @@ export class Common {
             throw new Error(e.message || e);
         }
     }
+    async setWebTrackEndPoint(params: any) {
+        let qs = {
+            "APIVersion": '0.6.0',
+        };
+        for (let key in params) {
+            qs[key] = params[key]
+        }
+        try {
+            let result = await this.proxyHttp({
+                uri: config.aliWebTrackUrl,
+                qs
+            });
+            console.log("setWebTrackEndPoint======>", result);
+        } catch (err) {
+            console.log(err)
+            return;
+        }
+        return;
+    }
+
 }
 
 let common = new Common();
@@ -135,3 +155,4 @@ function matchChannel(target, origin, defaultArr) {
         return result;
     }
 }
+

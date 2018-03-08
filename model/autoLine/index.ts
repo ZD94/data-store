@@ -1,65 +1,128 @@
 /*
  * @Author: Mr.He 
- * @Date: 2018-01-23 14:11:42 
+ * @Date: 2018-01-24 18:31:00 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-23 20:07:50
- * @content 增加线路 */
+ * @Last Modified time: 2018-03-07 15:25:12
+ * @content what is the content of this file. */
 
-import { CityService } from "model/city";
-import { DB } from '@jingli/database';
-import "./other";
-import "./automatic";
+import Common from "model/util";
+import { DB } from "@jingli/database";
+import config from "@jingli/config";
+import getData from "api/getData";
+import { DataOrder, BudgetType, STEP } from 'model/interface';
+import { dtaskMgr } from "model/dnodeAPI";
+import * as moment from 'moment';
+import { initLines } from "./init";
+import * as cluster from "cluster";
 
-export class AutoLine {
-    model: any;
-    constructor(model: any) {
-        this.model = model;
+export class AutoMatic {
+    constructor() {
+
+        let self = this;
+        if (cluster.isMaster) {
+            return;
+        }
+        if (config.lineTest.isNeedInit && config.lineTest.open) {
+            initLines().then((result) => {
+                console.log("ok ok ok ok", result);
+                self.tasks();
+            });
+        }
+
+        setTimeout(async () => {
+            if (!config.lineTest.isNeedInit && config.lineTest.open) {
+                self.tasks();
+            }
+        }, 5000);
     }
 
-    async addOneLine(fromName: string, toName: string, weight?: number) {
-        if (!fromName || !toName) {
-            throw new Error("addOneLine 参数错误");
+    async getFreeNodes() {
+        let result;
+        try {
+            result = await dtaskMgr.freeNodes();
+            return Math.floor(result.freeNodes * 0.2);
+        } catch (e) {
+            console.error(e);
+            return 0;
         }
-        weight = weight || 0;
+    }
 
-        let result = await Promise.all([CityService.searchCity(fromName), CityService.searchCity(toName)]);
-        let fromCity = result[0], toCity = result[1];
-        if (!fromCity || !toCity) {
-            return {
-                code: 0,
-                msg: "输入地点信息有误"
-            }
+    async tasks() {
+        let num = await this.getFreeNodes();
+        console.log("tasks running =====> ", num);
+        if (!num) {
+            return setTimeout(() => {
+                this.tasks();
+            }, 30 * 1000);
         }
 
-        let autoLines = await this.model.findAll({
-            where: {
-                from: fromCity.geonameid,
-                to: toCity.geonameid
+        let datas = await this.getLineDatas(num);
+
+        let completeParams = datas.map(this.completeParams);
+        let ps = completeParams.map(async (completeParam) => {
+            let result;
+            try {
+                result = await getData.search_data(completeParam.params);
+                if (result.step != STEP.FINAL) {
+                    return;
+                }
+            } catch (e) {
+                console.error(e);
+                return;
             }
+            await DB.models["AutoLines"].update(
+                {
+                    number: ++completeParam.hotData.number
+                }, {
+                    where: {
+                        id: completeParam.hotData.id
+                    }
+                }
+            );
         });
-        if (autoLines.length) {
-            return {
-                code: 1,
-                msg: "线路已经存在",
-                data: autoLines
-            }
-        }
-        let autoLine = await this.model.create({
-            from: fromCity.geonameid || fromCity.id,
-            to: toCity.geonameid || toCity.id,
-            fromName: fromCity.name,
-            toName: toCity.name,
-            weight,
-            number: 0
-        });
 
-        return {
-            code: 0,
-            msg: "线路增加成功",
-            data: [autoLine]
+        await Promise.all(ps);
+        console.log("over once: ", ps.length);
+        this.tasks();
+    }
+
+    completeParams(hotData) {
+        let params;
+        if (hotData.type == BudgetType.HOTEL) {
+            params = {
+                type: BudgetType.HOTEL,
+                channels: [],
+                input: {
+                    checkInDate: moment().add(10, "days").format("YYYY-MM-DD"),
+                    checkOutDate: moment().add(12, "days").format("YYYY-MM-DD"),
+                    city: hotData.to,
+                },
+                step: STEP.FINAL,
+                data: []
+            } as DataOrder;
+        } else {
+            params = {
+                type: BudgetType.TRAFFICT,
+                channels: [],
+                input: {
+                    leaveDate: moment().add(10, "days").format("YYYY-MM-DD"),
+                    originPlace: hotData.from,
+                    destination: hotData.to
+                },
+                step: STEP.FINAL,
+                data: []
+            } as DataOrder;
         }
+
+        return { params, hotData };
+    }
+
+    async getLineDatas(num: number) {
+        return await DB.models["AutoLines"].findAll({
+            order: [["updated_at", "asc"]],
+            limit: num
+        })
     }
 }
 
-let autoLine = new AutoLine(DB.models["AutoLines"]);
-export default autoLine;
+let autoMatic = new AutoMatic();

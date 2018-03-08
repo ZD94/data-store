@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-28 14:55:11
+ * @Last Modified time: 2018-03-07 20:27:40
  * @content what is the content of this file. */
 
 
@@ -15,7 +15,11 @@ let conn_timeout = require("connect-timeout");
 let bodyParser = require("body-parser");
 let moment = require("moment");
 import getData from "api/getData";
-import autoLine from "model/autoLine";
+import autoLine from "model/autoLine/addline";
+import Common from 'model/util';
+import * as config from "@jingli/config";
+import { EOperationStatus } from 'api/hotels';
+export const WebTrackUrlLimit = 160000;  //阿里云限制url的长度为16k
 
 let app = express();
 app.use(conn_timeout("300s"));
@@ -41,6 +45,17 @@ app.post("/searchData", wrapFn(async (req: any, res: any, next: any) => {
         params.input = JSON.parse(params.input);
     }
     let result = await getData.search_data(params);
+    await Common.setWebTrackEndPoint({
+        "__topic__": config.serverType,
+        "project": "data-store",
+        "eventName": "HttpRequest-SearchDataRequest",
+        "searchCondition": JSON.stringify(params.input),
+        "expectDataType": expectStep,
+        "returnDataType": result.step,
+        "dataLength": result.data.length,
+        "operationStatus": result.data && result.data.length ? EOperationStatus.REQUEST_SUCCESS : EOperationStatus.EMPTY,
+        "duration": Date.now() - req.enterTime
+    });
     logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), `expectStep: ${expectStep}, get Step: ${result.step}, length: ${result.data.length}`);
     res.json(result);
 }));

@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-22 17:52:39 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-23 16:56:49
+ * @Last Modified time: 2018-03-06 20:45:30
  * @content what is the content of this file. */
 
 
@@ -11,34 +11,33 @@ import { DB } from '@jingli/database';
 
 let columns = {
     id: {
-        type: sequelize.INTEGER,
+        type: sequelize.UUID,
         primaryKey: true,
-        autoIncrement: true,
+    },
+    type: {
+        type: sequelize.INTEGER,
+        allowNull: false,
     },
     from: {
         type: sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
     },
     to: {
         type: sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
     },
     fromName: {
         type: sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
     },
     toName: {
         type: sequelize.STRING(50),
-        allowNull: false,
+        allowNull: true,
     },
     number: {
         type: sequelize.INTEGER,
         allowNull: false
-    },
-    weight: {
-        type: sequelize.INTEGER,
-        allowNull: false
-    },
+    }
 }
 
 let options = {
@@ -58,6 +57,7 @@ let options = {
     ],
     underscored: true,
     timestamps: true,
-    tableName: 'auto_lines'
+    tableName: 'auto_lines',
+    scheme: "autoLine"
 }
 DB.models.AutoLines = DB.define('AutoLines', columns, options);
