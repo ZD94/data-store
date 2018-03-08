@@ -17,6 +17,9 @@ import Bluebird = require('bluebird');
 global['Promise'] = Bluebird;
 Bluebird.promisifyAll(require("redis"));
 
+import { init as cityInit } from '@jingli/city';
+cityInit({ placeUrl: config.placeAPI+'/city' });
+
 import cache from "@jingli/cache";
 cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
 
@@ -127,7 +130,6 @@ function checkListeningPort(path) {
                     resolve();
                 }
             } else {
-                logger.error(11111, e);
                 reject(e);
             }
         });
