@@ -8,7 +8,7 @@
 import { hotelRealTimeData } from "../../api/hotels";
 import { trafficRealTimeData } from "../../api/traffic";
 import { ISearchHotelParams, ISearchTicketParams } from 'model/interface';
-import {getCityInfo, nearby, CityWithDistanceInterface} from '@jingli/city';
+import {getCityInfo, nearby, CityWithDistanceInterface, CityInterface} from '@jingli/city';
 
 export default class RealData {
     static async getHotelRealTimeData(input: ISearchHotelParams, name: string, num?: number): Promise<any[]> {
