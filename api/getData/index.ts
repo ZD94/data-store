@@ -26,7 +26,7 @@ let getData = {
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-CacheDataRequest",
-                    "searchCondition": JSON.stringify(params),
+                    "searchCondition": JSON.stringify(params.input),
                     "expectDataType": STEP.CACHE,
                     "returnDataType": result.step,
                     "dataLength": result.data.length,
