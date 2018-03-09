@@ -18,7 +18,7 @@ global['Promise'] = Bluebird;
 Bluebird.promisifyAll(require("redis"));
 
 import { init as cityInit } from '@jingli/city';
-cityInit({ placeUrl: config.placeAPI+'/city' });
+cityInit({ placeUrl: config.placeAPI + '/city' });
 
 import cache from "@jingli/cache";
 cache.init({ redis_conf: config.redis.url, prefix: 'data-store:cache:' + config.appName });
@@ -38,8 +38,6 @@ const pkg = require("./package.json");
 
 import app from "./http";
 const http = require("http");
-import Common from "model/util";
-import { WebTrackUrlLimit } from "http/index"
 
 
 zone.forkStackTrace()
@@ -69,8 +67,8 @@ zone.forkStackTrace()
             process.title = `${config.appName || pkg.name}-worker`;
         }
         process.on('unhandledRejection', function (reason, p) {
-            let errors = reason ? JSON.stringify(reason) : '';
-            reason = reason.substring(0, WebTrackUrlLimit - 6000);
+            // let errors = reason ? JSON.stringify(reason) : '';
+            // errors = errors.substring(0, WebTrackUrlLimit - 6000);
             // await Common.setWebTrackEndPoint({
             //     "__topic__": config.serverType,
             //     "project": "data-store",
