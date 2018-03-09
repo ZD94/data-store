@@ -69,8 +69,8 @@ zone.forkStackTrace()
             process.title = `${config.appName || pkg.name}-worker`;
         }
         process.on('unhandledRejection', function (reason, p) {
-            let errors = reason ? JSON.stringify(reason) : '';
-            reason = reason.substring(0, WebTrackUrlLimit - 6000);
+            // let errors = reason ? JSON.stringify(reason) : '';
+            // errors = errors.substring(0, WebTrackUrlLimit - 6000);
             // await Common.setWebTrackEndPoint({
             //     "__topic__": config.serverType,
             //     "project": "data-store",
