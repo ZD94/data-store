@@ -33,7 +33,7 @@ export class FinalData extends RealData {
                 //有promiseId，等待结束
                 let data = await this.promiseIds[promiseId];
 
-                await common.setWebTrackEndPoint({
+                common.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
@@ -176,7 +176,7 @@ export class FinalData extends RealData {
                 return await FinalData.getTrafficRealTimeData(input, name);
             } else {
                 //ok
-                await common.setWebTrackEndPoint({
+                common.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
@@ -198,7 +198,7 @@ export class FinalData extends RealData {
                 return await FinalData.getHotelRealTimeData(input, name);
             } else {
                 //ok
-                await common.setWebTrackEndPoint({
+                common.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-FinalDataRequest",
@@ -208,7 +208,7 @@ export class FinalData extends RealData {
                     "dataLength": result.data.length,
                     "operationStatus": result.data && result.data.length ? EOperationStatus.FINAL : EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
-                    "hit": result.step != STEP.FINAL && result.data && result.data.length ? true : false
+                    "hit": result.data && result.data.length ? true : false
                 });
                 return result.data;
             }

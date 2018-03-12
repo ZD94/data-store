@@ -45,7 +45,7 @@ app.post("/searchData", wrapFn(async (req: any, res: any, next: any) => {
         params.input = JSON.parse(params.input);
     }
     let result = await getData.search_data(params);
-    await Common.setWebTrackEndPoint({
+    Common.setWebTrackEndPoint({
         "__topic__": config.serverType,
         "project": "data-store",
         "eventName": "HttpRequest-SearchDataRequest",
