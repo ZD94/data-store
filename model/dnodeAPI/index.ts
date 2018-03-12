@@ -32,7 +32,7 @@ export class DtaskMgr {
         let timing = Date.now();
         try {
             let data = await API["dtask_mgr"].runTask({ name, input });
-            await Common.setWebTrackEndPoint({
+            Common.setWebTrackEndPoint({
                 "__topic__": config.serverType,
                 "project": "data-store",
                 "eventName": name,
@@ -48,7 +48,7 @@ export class DtaskMgr {
         } catch (e) {
             let errorInfo = e && e.message? JSON.stringify(e.message): (e? JSON.stringify(e): '');
             e = e.substring(0, WebTrackUrlLimit - 6000);
-            await Common.setWebTrackEndPoint({
+            Common.setWebTrackEndPoint({
                 "__topic__": config.serverType,
                 "project": "data-store",
                 "eventName": name,

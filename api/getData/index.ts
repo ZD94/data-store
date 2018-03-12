@@ -22,7 +22,7 @@ let getData = {
         switch (params.step) {
             case STEP.CACHE:
                 result = await cacheData.getCacheData(params);
-                await common.setWebTrackEndPoint({
+                common.setWebTrackEndPoint({
                     "__topic__": config.serverType,
                     "project": "data-store",
                     "eventName": "HttpRequest-CacheDataRequest",
