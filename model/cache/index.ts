@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-28 14:12:00
+ * @Last Modified time: 2018-03-12 21:06:12
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -12,8 +12,8 @@ import API from "@jingli/dnode-api";
 import common from 'model/util';
 import moment = require("moment");
 import { fullPriceService } from "model/fullPrice";
-import { getCityInfo, CityInterface, CityWithDistanceInterface, nearby} from '@jingli/city';
-
+import { getCityInfo, CityInterface, CityWithDistanceInterface, nearby } from '@jingli/city';
+import config from "@jingli/config";
 
 export class CacheData {
     async getCacheData(params: DataOrder) {
@@ -93,9 +93,25 @@ export class CacheData {
             }
             FIN = false;
 
+            common.setWebTrackEndPoint({
+                "__topic__": config.serverType,
+                "project": "data-store",
+                "eventName": "CACHE",
+                "searchCondition": JSON.stringify(input),
+                "hit": false
+            });
+
             // 缓存中没有数据，走全价逻辑
             return await fullPriceService.getHotelFullPrice(input, true);
         }
+
+        common.setWebTrackEndPoint({
+            "__topic__": config.serverType,
+            "project": "data-store",
+            "eventName": "CACHE",
+            "searchCondition": JSON.stringify(input),
+            "hit": true
+        });
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
@@ -132,9 +148,25 @@ export class CacheData {
 
             FIN = false;
 
+            common.setWebTrackEndPoint({
+                "__topic__": config.serverType,
+                "project": "data-store",
+                "eventName": "CACHE",
+                "searchCondition": JSON.stringify(input),
+                "hit": false
+            });
+
             // 缓存中没有数据，走全价逻辑
             return await fullPriceService.getTrafficFullPrice(input, true);
         }
+
+        common.setWebTrackEndPoint({
+            "__topic__": config.serverType,
+            "project": "data-store",
+            "eventName": "CACHE",
+            "searchCondition": JSON.stringify(input),
+            "hit": true
+        });
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
