@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-12 21:06:12
+ * @Last Modified time: 2018-03-13 10:19:31
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -98,7 +98,7 @@ export class CacheData {
                 "project": "data-store",
                 "eventName": "CACHE",
                 "searchCondition": JSON.stringify(input),
-                "hit": false
+                "hit": 'false'
             });
 
             // 缓存中没有数据，走全价逻辑
@@ -110,7 +110,7 @@ export class CacheData {
             "project": "data-store",
             "eventName": "CACHE",
             "searchCondition": JSON.stringify(input),
-            "hit": true
+            "hit": 'true'
         });
 
         let created = moment(cacheData.created_at);
@@ -153,7 +153,7 @@ export class CacheData {
                 "project": "data-store",
                 "eventName": "CACHE",
                 "searchCondition": JSON.stringify(input),
-                "hit": false
+                "hit": 'false'
             });
 
             // 缓存中没有数据，走全价逻辑
@@ -165,7 +165,7 @@ export class CacheData {
             "project": "data-store",
             "eventName": "CACHE",
             "searchCondition": JSON.stringify(input),
-            "hit": true
+            "hit": 'true'
         });
 
         let created = moment(cacheData.created_at);
