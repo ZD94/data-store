@@ -1,8 +1,8 @@
 /*
  * @Author: Mr.He 
  * @Date: 2017-12-17 11:48:17 
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-03-06 21:11:50
+ * @Last Modified by: Mr.He
+ * @Last Modified time: 2018-03-13 14:15:05
  * @content what is the content of this file. */
 
 
@@ -90,6 +90,10 @@ export class FullPriceService extends TrafficPrice {
                 remainNumber: 100
             }]
             result.push(data);
+        }
+
+        if (!result.length) {
+            result.push(flightModel, trainModel);
         }
 
         return {

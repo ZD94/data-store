@@ -20,7 +20,7 @@ var logger = new Logger("data-store");
 //缓存失效时间
 const CACHE_DURATION = 2 * 60 * 60 * 1000;
 
-export enum EOperationStatus  {
+export enum EOperationStatus {
     BEFORE_PROCESS = 'BEFORE_PROCESS',
     PROCESSING = 'PROCESSING',
     CRAWL_SUCCESS = 'CRAWL-SUCCESS',
@@ -58,20 +58,21 @@ export class HotelStorage extends SelectDataHelp {
         })
     }
 
-    async getData(input: ISearchHotelParams, name: string): Promise<{ created_at: string, data: IHotel[] }> {
+    async getData(input: ISearchHotelParams, name: string): Promise<{ created_at: string, data: IHotel[], [index: string]: any }> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
         //最远距离1km
         const MAX_DISTANCE = 1000;
         /** 
-         * 不启用 按照坐标查找
-         * let where = sequelize.where(
+         * 按照坐标查找, 缓存筛选更加严格
+         **/
+        let where2 = sequelize.where(
             sequelize.fn('ST_Distance',
                 sequelize.fn('ST_GeometryFromText', `POINT(${input.longitude} ${input.latitude})`), sequelize.col('location')
             ), {
                 '$lte': MAX_DISTANCE,
-            }); */
+            });
         let where = {
             channel: name,
             checkInDate: input.checkInDate,
@@ -83,8 +84,9 @@ export class HotelStorage extends SelectDataHelp {
                 ne: '[]'
             }
         }
-        let result = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
+        let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
         if (result) {
+            result.catchHit = true;
             return result;
         }
 
@@ -118,7 +120,7 @@ export class HotelRealTimeData extends DtaskMgr {
         ret = await this.runDtask(name, input);
         if (ret && ret.length) {
             await hotelStorage.setData(input, name, ret);
-        }  
+        }
         return ret;
     }
 }

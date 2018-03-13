@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-24 16:49:08 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-07 20:30:30
+ * @Last Modified time: 2018-03-13 15:45:14
  * @content what is the content of this file. */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -130,11 +130,11 @@ export class FinalData extends RealData {
                     if (params.type == BudgetType.TRAFFICT) {
                         let options = <ISearchTicketParams>params.input;
                         let originPlace = await getCityInfo(options.originPlace);
-                        if (!originPlace.isCity) { 
+                        if (!originPlace.isCity) {
                             originPlace = (await _self.nearbyCity(originPlace, 100)) || originPlace;
                         }
                         let destination = await getCityInfo(options.destination);
-                        if (!destination.isCity) { 
+                        if (!destination.isCity) {
                             destination = (await _self.nearbyCity(destination, 100) || destination);
                         }
                         options.originPlace = originPlace.id;
@@ -156,7 +156,7 @@ export class FinalData extends RealData {
         })();
     }
 
-    private async nearbyCity(place: CityInterface, distance: number) :Promise<CityWithDistanceInterface>{ 
+    private async nearbyCity(place: CityInterface, distance: number): Promise<CityWithDistanceInterface> {
         let cities = await nearby({ latitude: place.latitude, longitude: place.longitude }, distance, true);
         if (cities && cities.length) {
             place = cities[0];

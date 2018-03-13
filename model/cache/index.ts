@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-13 10:19:31
+ * @Last Modified time: 2018-03-13 16:18:08
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -43,7 +43,7 @@ export class CacheData {
         let datas = await Promise.all(ps);
 
         /* 
-         * 当存在多个 channel 数据时，有一个为FINAL其余的都不要；没有时全部输出；
+         * 当存在多个 channel 数据时，有FINAL数据时舍弃其它STEP数据；没有时全部输出；
          * 应对场景，如 上海到杭州，飞机的始终没有，只有火车频道的有； 
          **/
         let result = [];
@@ -80,7 +80,7 @@ export class CacheData {
         return null;
     }
 
-    /* @params isOrigin 是否只是查看数据库中数据 */
+    /* @params isOrigin 是否只是查看数据库中数据, 避免走全价逻辑 */
     async hotelCache(input: ISearchHotelParams, name: string, isOrigin?: Boolean): Promise<{ step: STEP, data: any[] }> {
         let FIN = true;
         let cacheData = await hotelStorage.getData(input, name);
@@ -116,24 +116,20 @@ export class CacheData {
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
 
-        console.log("diffTime  hotel : ", diffTime);
-        if (diffTime > HOTLE_CACHE_TIME) {
-            if (isOrigin) {
-                return {
-                    data: cacheData.data,
-                    step: STEP.CACHE
-                }
+        if (cacheData.catchHit && diffTime <= HOTLE_CACHE_TIME) {
+            return {
+                data: cacheData.data,
+                step: STEP.FINAL
             }
-
-            FIN = false;
-        }
-        return {
-            step: FIN ? STEP.FINAL : STEP.CACHE,
-            data: cacheData.data
+        } else {
+            return {
+                data: cacheData.data,
+                step: STEP.CACHE
+            }
         }
     }
 
-    /* @params isOrigin 是否只是查看数据库中数据 */
+    /* @params isOrigin 是否只是查看数据库中数据，避免走全价逻辑 */
     async trafficCache(input: ISearchTicketParams, name: string, isOrigin?: Boolean): Promise<{ step: STEP, data: any[] }> {
         let FIN = true;
         let result = [];
@@ -170,18 +166,17 @@ export class CacheData {
 
         let created = moment(cacheData.created_at);
         let diffTime = moment().diff(created, "minutes");
-        if (diffTime > HOTLE_CACHE_TIME) {
-            if (isOrigin) {
-                return {
-                    data: cacheData.data,
-                    step: STEP.CACHE
-                }
+
+        if (cacheData.catchHit && diffTime <= TRAFFIC_CACHE_TIME) {
+            return {
+                data: cacheData.data,
+                step: STEP.FINAL
             }
-            FIN = false;
-        }
-        return {
-            step: FIN ? STEP.FINAL : STEP.CACHE,
-            data: cacheData.data
+        } else {
+            return {
+                data: cacheData.data,
+                step: STEP.CACHE
+            }
         }
     }
 }

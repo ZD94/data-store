@@ -32,7 +32,6 @@ import cluster = require("cluster");
 import os = require("os");
 import { loadModel, sync } from "./db";
 import "modelSql/index";
-// import "./model/autoLine";
 
 const pkg = require("./package.json");
 
@@ -47,7 +46,6 @@ zone.forkStackTrace()
             console.log("PORT  === >  ", PORT);
             await sync({ force: false });
 
-            console.log("ok ok ok");
             await API.initSql(path.join(__dirname, 'api'), config.api);
             let result = await checkListeningPort(PORT);
         }
@@ -67,14 +65,6 @@ zone.forkStackTrace()
             process.title = `${config.appName || pkg.name}-worker`;
         }
         process.on('unhandledRejection', function (reason, p) {
-            // let errors = reason ? JSON.stringify(reason) : '';
-            // errors = errors.substring(0, WebTrackUrlLimit - 6000);
-            // await Common.setWebTrackEndPoint({
-            //     "__topic__": config.serverType,
-            //     "project": "data-store",
-            //     "eventName": "SystemHealth-UnHandledRejection",
-            //     "errors": reason
-            // });
             if (config.debug) {
                 throw reason;
             }

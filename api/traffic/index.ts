@@ -40,7 +40,7 @@ export class TicketStorage extends SelectDataHelp {
         })
     }
 
-    async getData(input: ISearchTicketParams, name: string): Promise<{ data: ITicket[], created_at: string }> {
+    async getData(input: ISearchTicketParams, name: string): Promise<{ data: ITicket[], created_at: string, [index: string]: any }> {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
@@ -59,6 +59,7 @@ export class TicketStorage extends SelectDataHelp {
         }
         let result = await this.model.findOne({ where: where, order: [["created_at", "desc"]] });
         if (result) {
+            result.catchHit = true;
             return result;
         }
 

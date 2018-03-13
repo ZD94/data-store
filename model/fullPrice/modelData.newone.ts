@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-09 21:22:12 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-15 16:36:29
+ * @Last Modified time: 2018-03-13 14:14:37
  * @content 提供全价数据服务. */
 
 
@@ -66,7 +66,7 @@ export let flightModel = {
             "cabins": [
                 {
                     "name": 2,
-                    "price": 10
+                    "price": 1500
                 }
             ]
         }
