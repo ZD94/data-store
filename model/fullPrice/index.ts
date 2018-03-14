@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-17 11:48:17 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-13 14:15:05
+ * @Last Modified time: 2018-03-14 17:30:59
  * @content what is the content of this file. */
 
 
@@ -92,9 +92,9 @@ export class FullPriceService extends TrafficPrice {
             result.push(data);
         }
 
-        if (!result.length) {
+        /* if (!result.length) {
             result.push(flightModel, trainModel);
-        }
+        } */
 
         return {
             data: result,
@@ -104,7 +104,7 @@ export class FullPriceService extends TrafficPrice {
 
     async getHotelFullPrice(input: ISearchHotelParams, isNotOrigin?: Boolean) {
         return {
-            data: testHotel,
+            data: [],
             step: STEP.FULL
         }
     }
