@@ -1,8 +1,8 @@
 /*
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-03-09 10:53:41
+ * @Last Modified by: Mr.He
+ * @Last Modified time: 2018-03-15 11:46:18
  * @content what is the content of this file. */
 
 
@@ -15,7 +15,6 @@ let conn_timeout = require("connect-timeout");
 let bodyParser = require("body-parser");
 let moment = require("moment");
 import getData from "api/getData";
-import autoLine from "model/autoLine/addline";
 import Common from 'model/util';
 import * as config from "@jingli/config";
 import { EOperationStatus } from 'api/hotels';
@@ -28,11 +27,11 @@ app.use(bodyParser.urlencoded({ limit: '8mb', extended: true }));
 
 app.use(usingTime);
 
-function wrapFn(fn: { (req, res, next): any }) { 
-    return async (req, res, next) => { 
+function wrapFn(fn: { (req, res, next): any }) {
+    return async (req, res, next) => {
         try {
             let ret = await fn(req, res, next);
-        } catch (err) { 
+        } catch (err) {
             return next(err);
         }
     }
@@ -60,12 +59,6 @@ app.post("/searchData", wrapFn(async (req: any, res: any, next: any) => {
     res.json(result);
 }));
 
-app.get("/addLine", wrapFn(async (req: any, res: any, next: any) => {
-    let { from, to } = req.query;
-    let result = await autoLine.addOneLine(from, to);
-    res.json(result);
-}));
-
 app.get("/test", wrapFn((req, res, next) => {
     res.send("test is ok.");
 }));
@@ -82,8 +75,8 @@ function usingTime(req: any, res: any, next: any) {
     next();
 }
 
-app.use((err, req, res, next) => { 
-    if (err) { 
+app.use((err, req, res, next) => {
+    if (err) {
         logger.error(err);
         return res.json({ code: 500, msg: '系统内部错误' });
     }
