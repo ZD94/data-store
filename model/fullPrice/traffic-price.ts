@@ -34,8 +34,9 @@ export class TrafficPrice extends SelectDataHelp {
         });
         if (!price)
             return price;
+
         if (price.length == 0) {
-            console.log("TrafficPrice 全价数据没有", where);
+            console.log("TrafficPrice 全价数据没有,可能是请求火车", type, where);
         }
         return price;
     }

@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-17 11:48:17 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-14 17:30:59
+ * @Last Modified time: 2018-03-15 20:41:23
  * @content what is the content of this file. */
 
 
@@ -57,7 +57,7 @@ export class FullPriceService extends TrafficPrice {
         });
 
         for (let item of flightData) {
-            let data = _.clone(flightModel);
+            let data = _.cloneDeep(flightModel);
             data.originPlace = input.originPlace;
             data.destination = input.destination;
             data.departDateTime = moment(input.leaveDate).format();
