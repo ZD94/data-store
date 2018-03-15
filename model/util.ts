@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:23:38 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-06 22:37:10
+ * @Last Modified time: 2018-03-15 14:33:48
  * @content 公共方法 */
 
 import { BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
@@ -127,7 +127,6 @@ export class Common {
                 uri: config.aliWebTrackUrl,
                 qs
             });
-            console.log("setWebTrackEndPoint======>", result);
         } catch (err) {
             console.log(err)
             return;

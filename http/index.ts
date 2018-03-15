@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2018-01-10 18:40:03 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-15 11:46:18
+ * @Last Modified time: 2018-03-15 18:56:45
  * @content what is the content of this file. */
 
 
@@ -43,6 +43,7 @@ app.post("/searchData", wrapFn(async (req: any, res: any, next: any) => {
     if (typeof params.input == 'string') {
         params.input = JSON.parse(params.input);
     }
+
     let result = await getData.search_data(params);
     Common.setWebTrackEndPoint({
         "__topic__": config.serverType,
@@ -55,7 +56,7 @@ app.post("/searchData", wrapFn(async (req: any, res: any, next: any) => {
         "operationStatus": result.data && result.data.length ? EOperationStatus.REQUEST_SUCCESS : EOperationStatus.EMPTY,
         "duration": Date.now() - req.enterTime
     });
-    logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), `expectStep: ${expectStep}, get Step: ${result.step}, length: ${result.data.length}`);
+    logger.info(moment().format("YYYY-MM-DD HH:mm:ss"), `expectStep: ${expectStep}, get Step: ${result.step}, length: ${result.data.length}`);
     res.json(result);
 }));
 
@@ -68,7 +69,7 @@ function usingTime(req: any, res: any, next: any) {
     res.json = function (data: object) {
         res.setHeader('Content-Type', 'application/json');
         res.write(JSON.stringify(data));
-        logger.info(moment().format("YYYY-MM-DD hh:mm:ss"), req.method, req.url, process.title, (Date.now() - req.enterTime) / 1000, "s");
+        logger.info(moment().format("YYYY-MM-DD HH:mm:ss"), req.method, req.url, process.title, (Date.now() - req.enterTime) / 1000, "s");
         res.end();
     }
 

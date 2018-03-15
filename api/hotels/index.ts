@@ -11,6 +11,7 @@ import { CityService, ICity } from "model/city";
 import { SelectDataHelp } from "api/data-support";
 import Logger from '@jingli/logger';
 import { DtaskMgr } from "model/dnodeAPI";
+import * as moment from "moment";
 
 import Common from "model/util";
 import * as config from "@jingli/config";
@@ -75,8 +76,8 @@ export class HotelStorage extends SelectDataHelp {
             }); */
         let where = {
             channel: name,
-            checkInDate: input.checkInDate,
-            checkOutDate: input.checkOutDate,
+            checkInDate: moment(input.checkInDate).format("YYYY-MM-DD"),
+            checkOutDate: moment(input.checkOutDate).format("YYYY-MM-DD"),
             city: {
                 in: await this.getSelectCitis(input.city)
             },
@@ -84,6 +85,7 @@ export class HotelStorage extends SelectDataHelp {
                 ne: '[]'
             }
         }
+
         let result = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
         if (result) {
             result.catchHit = true;

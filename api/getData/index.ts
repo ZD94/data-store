@@ -2,17 +2,19 @@
  * @Author: Mr.He 
  * @Date: 2017-12-08 18:19:41 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-01-08 17:00:26
+ * @Last Modified time: 2018-03-15 18:55:08
  * @content what is the content of this file. */
 
 import cache from "@jingli/cache";
 import { STEP, BudgetType, DataOrder, ISearchHotelParams, ISearchTicketParams } from "model/interface";
-import common  from 'model/util';
+import common from 'model/util';
 import { fullPriceService } from "model/fullPrice";
 import cacheData from "model/cache";
 import finalData from "model/final";
 import * as config from "@jingli/config";
 import { EOperationStatus } from 'api/hotels';
+
+// import "./index.test";
 
 let getData = {
     async search_data(params: DataOrder) {
@@ -30,9 +32,9 @@ let getData = {
                     "expectDataType": STEP.CACHE,
                     "returnDataType": result.step,
                     "dataLength": result.data.length,
-                    "operationStatus": result.data && result.data.length? EOperationStatus.CACHE: EOperationStatus.EMPTY,
+                    "operationStatus": result.data && result.data.length ? EOperationStatus.CACHE : EOperationStatus.EMPTY,
                     "duration": Date.now() - timing,
-                    "hit": result.step != STEP.FULL && result.data && result.data.length? true: false
+                    "hit": result.step != STEP.FULL && result.data && result.data.length ? true : false
                 });
                 return result;
             case STEP.FINAL:

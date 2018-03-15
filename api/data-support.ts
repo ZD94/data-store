@@ -35,11 +35,8 @@ export class SelectDataHelp {
             if (item.lang == "jlcityid") {
                 cities.push(item.value);
             }
-            if (item.lang == "geonameid") {
-                cities.push(item.value);
-            }
         }
-
+        cities.push(city.id);
         /* place 服务问题，预防预算出错 */
         if (cityId == '2038349') {
             cities.push("CT_131");

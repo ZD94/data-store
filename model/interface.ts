@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 11:37:39 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2017-12-24 17:38:42
+ * @Last Modified time: 2018-03-15 16:45:47
  * @content what is the content of this file. */
 
 export const HOTLE_CACHE_TIME = 2 * 60;
@@ -29,7 +29,7 @@ export enum BudgetType {
 
 export interface DataOrder {
     type: BudgetType;
-    channels: string[];
+    channels?: string[];
     input: ISearchHotelParams | ISearchTicketParams;
     step: STEP;
     data: any[];

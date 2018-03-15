@@ -2,7 +2,7 @@
  * @Author: Mr.He 
  * @Date: 2017-12-23 12:05:15 
  * @Last Modified by: Mr.He
- * @Last Modified time: 2018-03-13 16:18:08
+ * @Last Modified time: 2018-03-15 18:57:49
  * @content 优先获取cache数据，没有cache数据时 获取全价数据 */
 
 import { ISearchHotelParams, ISearchTicketParams, BudgetType, DataOrder, HOTLE_CACHE_TIME, TRAFFIC_CACHE_TIME, STEP } from 'model/interface';
@@ -122,11 +122,28 @@ export class CacheData {
                 step: STEP.FINAL
             }
         } else {
+            /* 从外部获取的住宿价格为几天的总价，需要按传入的时间处理价格 */
             return {
-                data: cacheData.data,
+                data: this.dealHotelPrice(input, cacheData),
                 step: STEP.CACHE
             }
         }
+    }
+
+    /* 缓存数据按照请求时间，处理价格 */
+    dealHotelPrice(input: ISearchHotelParams, data: any) {
+        let targetDays = moment(moment(input.checkOutDate).format("YYYY-MM-DD")).diff(moment(moment(input.checkInDate).format("YYYY-MM-DD")), 'days');
+        let dataDays = moment(moment(data.checkOutDate).format("YYYY-MM-DD")).diff(moment(moment(data.checkInDate).format("YYYY-MM-DD")), 'days');
+
+        return data.data.map((item) => {
+            if (!item.agents || !Array.isArray(item.agents)) {
+                return item;
+            }
+            for (let agent of item.agents) {
+                agent.price = (agent.price / dataDays * targetDays).toFixed(1);
+            }
+            return item;
+        });
     }
 
     /* @params isOrigin 是否只是查看数据库中数据，避免走全价逻辑 */
