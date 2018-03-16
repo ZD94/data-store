@@ -26,8 +26,8 @@ let paramsTraffic = {
     input:
         {
             leaveDate: '2018-03-25T13:00:00.000Z',
-            originPlace: '1790572',
-            destination: '1796231',
+            originPlace: '800000054',
+            destination: '1814905',
             earliestGoBackDateTime: null,
             latestArrivalDateTime: '2018-03-25T13:00:00.000Z'
         },
@@ -39,7 +39,7 @@ let paramsTraffic = {
     isAbroad: false
 } as DataOrder;
 setTimeout(async () => {
-    let resultAll = await getData.search_data(paramsTraffic);
+    let resultAll = await getData.search_data(params);
     let result = resultAll.data;
     console.log(result.length, resultAll.step, result)
 }, 3000);

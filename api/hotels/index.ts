@@ -68,12 +68,12 @@ export class HotelStorage extends SelectDataHelp {
         /** 
          * 按照坐标查找, 缓存筛选更加严格
          **/
-        /* let where2 = sequelize.where(
+        let where2 = sequelize.where(
             sequelize.fn('ST_Distance',
                 sequelize.fn('ST_GeometryFromText', `POINT(${input.longitude} ${input.latitude})`), sequelize.col('location')
             ), {
                 '$lte': MAX_DISTANCE,
-            }); */
+            });
         let where = {
             channel: name,
             checkInDate: moment(input.checkInDate).format("YYYY-MM-DD"),
@@ -86,7 +86,7 @@ export class HotelStorage extends SelectDataHelp {
             }
         }
 
-        let result = await this.model.findOne({ where: [where], order: [["created_at", "desc"]] });
+        let result = await this.model.findOne({ where: [where, where2], order: [["created_at", "desc"]] });
         if (result) {
             result.catchHit = true;
             return result;
