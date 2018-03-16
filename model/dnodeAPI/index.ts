@@ -43,7 +43,7 @@ export class DtaskMgr {
             return data;
         } catch (e) {
             let errorInfo = e && e.message ? JSON.stringify(e.message) : (e ? JSON.stringify(e) : '');
-            e = e.substring(0, WebTrackUrlLimit - 6000);
+            e = errorInfo.substring(0, WebTrackUrlLimit - 6000);
             Common.setWebTrackEndPoint({
                 "__topic__": config.serverType,
                 "project": "data-store",

@@ -26,8 +26,8 @@ let paramsTraffic = {
     input:
         {
             leaveDate: '2018-03-25T13:00:00.000Z',
-            originPlace: '1814068',
-            destination: '1809458',
+            originPlace: '1790572',
+            destination: '1796231',
             earliestGoBackDateTime: null,
             latestArrivalDateTime: '2018-03-25T13:00:00.000Z'
         },
