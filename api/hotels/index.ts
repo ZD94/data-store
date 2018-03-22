@@ -63,6 +63,8 @@ export class HotelStorage extends SelectDataHelp {
         if (typeof input == 'string') {
             input = JSON.parse(input);
         }
+        let checkInDate = moment(input.checkInDate).format("YYYY-MM-DD");
+        let checkOutDate = moment(input.checkOutDate).format("YYYY-MM-DD");
         //最远距离1km
         const MAX_DISTANCE = 1000;
         /** 
@@ -76,8 +78,8 @@ export class HotelStorage extends SelectDataHelp {
             });
         let where = {
             channel: name,
-            checkInDate: moment(input.checkInDate).format("YYYY-MM-DD"),
-            checkOutDate: moment(input.checkOutDate).format("YYYY-MM-DD"),
+            checkInDate,
+            checkOutDate,
             city: {
                 in: await this.getSelectCitis(input.city)
             },
@@ -99,9 +101,21 @@ export class HotelStorage extends SelectDataHelp {
         if (!resultLarger) {
             return null;
         }
+
+        let days = moment(checkOutDate).diff(checkInDate, 'days');
+        let originDays = moment(resultLarger.checkOutDate).startOf('day').diff(moment(resultLarger.checkInDate).startOf('day'), 'days');
         for (let item of resultLarger.data) {
+            /* 处理住宿时间 */
             item.checkInDate = input.checkInDate;
             item.checkOutDate = input.checkOutDate;
+
+            /* 处理住宿价格，价格为几天内总价 */
+            if (item.agents) {
+                item.agents.map((agent) => {
+                    agent.price = agent.price / originDays * days;
+                    return agent;
+                });
+            }
         }
 
         return resultLarger;
